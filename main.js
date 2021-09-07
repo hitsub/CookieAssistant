@@ -4,12 +4,12 @@ if(CookieAssistant === undefined)
 }
 if(typeof CCSE == 'undefined')
 {
-    Game.LoadMod('https://raw.githubusercontent.com/klattmose/klattmose.github.io/master/CookieClicker/SteamMods/CCSE/main.js');
+    Game.LoadMod('https://klattmose.github.io/CookieClicker/SteamMods/CCSE/main.js');
 }
 
 CookieAssistant.name = 'Cookie Assistant';
 CookieAssistant.version = '0.1.1';
-CookieAssistant.GameVersion = '2.04';
+CookieAssistant.GameVersion = '2.042';
 
 
 CookieAssistant.launch = function()
