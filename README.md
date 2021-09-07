@@ -24,4 +24,6 @@ Steam版クッキークリッカーのアシストツールです。
   - これらの機能の実行間隔の設定
   - このMODのアプデチェック
 
+# ダウンロード / Download
 
+Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/download/CookieAssistant.zip)
