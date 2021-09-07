@@ -1,0 +1,12 @@
+{
+	"Name": "Cookie Assistant",
+	"ID": "cookieassistant",
+	"Author": "Hitsub",
+	"Description": "Assist tools for CookieClicker Steam edition.",
+	"ModVersion": 0.1,
+	"GameVersion": 2.04,
+	"Date": "08/09/2021",
+	"Dependencies": [],
+	"Disabled": 1,
+	"AllowSteamAchievs": 1
+}
