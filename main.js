@@ -84,6 +84,7 @@ CookieAssistant.launch = function()
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
+		CookieAssistant.CheckUpdate();
 	}
 
 	CookieAssistant.restoreDefaultConfig = function(mode){
@@ -116,17 +117,17 @@ CookieAssistant.launch = function()
 		//大クッキークリック
         str +=  '<div class="listing">'
                 + m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
-                + '<label>Interval(ms) : </label>'
+                + '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals["autoClickBigCookie"], "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
                 + '</div>';
 		//黄金クッキークリック
         str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick GoldenCookie ON', 'AutoClick GoldenCookie OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
+				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals["autoClickBigCookie"], "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
 		//トナカクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick Reindeer(トナカイ) ON', 'AutoClick Reindeer(トナカイ) OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
+				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals["autoClickReindeer"], "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)")
 				+ '<div class="listing">'
 					+ '<label>※クリスマスイベント中以外は有効にしても効果はありません</label><br />'
@@ -135,7 +136,7 @@ CookieAssistant.launch = function()
 				+ '</div>';
 		//FortuneNewsクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
+				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals["autoClickFortuneNews"], "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)")
 				+ '<div class="listing">'
 					+ '<label>※フォーチュンクッキーのアップグレードを購入するまで有効にしても効果はありません</label><br />'
@@ -145,6 +146,8 @@ CookieAssistant.launch = function()
 
         str += m.Header('Misc');
         str += '<div class="listing">' + m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default') + '</div>';
+
+        str += '<div class="listing">' + m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update') + '</div>';
 
         return str;
     }
@@ -205,6 +208,22 @@ CookieAssistant.launch = function()
     {
 		CookieAssistant.config = JSON.parse(str);
 		CookieAssistant.DoAction();
+	}
+
+	
+	CookieAssistant.CheckUpdate = async function()
+	{
+		var res = await fetch("https://api.github.com/repos/hitsub/CookieAssistant/releases/latest")
+		var json = await res.json()
+
+		if(json.tag_name == CookieAssistant.version)
+		{
+			Game.Notify(CookieAssistant.name, '最新版です<br>This is the latest version', "", 3)
+			return;
+		}
+
+		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">アップデートがあります<br>There will be an update.</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">ここからダウンロードしてください。<br>Download Here</a>`)
+		Game.UpdateMenu();
 	}
 
 	if(CCSE.ConfirmGameVersion(CookieAssistant.name, CookieAssistant.version, CookieAssistant.GameVersion))
