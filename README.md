@@ -14,6 +14,9 @@ Steam版クッキークリッカーのアシストツールです。
   - Auto click Golden Cookie
   - Auto click Reindeer
   - Auto click Fortune News
+  - Auto spellcasting 'Hand of Fate' during frenzy effect
+  - Auto destroy Wrinklers
+  - Auto purchase Elder Pledge
   - Enabling/Disabling the above features
   - Setting the interval for the above features
   - Check update this mod
@@ -22,6 +25,9 @@ Steam版クッキークリッカーのアシストツールです。
   - 黄金クッキーの自動クリック
   - トナカイの自動クリック
   - フォーチューンニュースの自動クリック
+  - フィーバー中に自動で「運命を押し付ける」を詠唱
+  - シワシワ虫の自動撃退
+  - エルダー宣誓の自動購入
   - これらの機能のON/OFF切り替え
   - これらの機能の実行間隔の設定
   - このMODのアプデチェック
@@ -33,13 +39,13 @@ Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/downlo
 # 今後入れる予定の機能 / Future plan
 
 - EN
-  - Auto spellcasting 'Hand of Fate' during golden cookie buff
-  - Auto destroy Wrinklers
-  - Auto purchase Elder Pledge
+  - Auto buy upgrades
+  - Auto switch to seasons with remaining upgrades
+  - Auto buy buildings
 - JP
-  - 黄金クッキーによるバフ獲得中に自動で「運命を押し付ける」を詠唱
-  - シワシワ虫の自動撃退
-  - エルダー宣誓の自動購入
+  - アップグレードの自動購入
+  - アップグレードが終わってないシーズンへの自動切換え
+  - 建物の自動購入
 
 # 互換性 / Compatibility
 
