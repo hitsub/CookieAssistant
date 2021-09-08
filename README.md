@@ -5,7 +5,7 @@ Does not support direct rewriting of values or giving items.
 Steam版クッキークリッカーのアシストツールです。  
 値の直接書き換えやアイテムの付与といったことには対応しません。
 
-![SS_No-00031](https://user-images.githubusercontent.com/5540614/132384942-601b281d-3a45-4bbf-b114-4bbe32c01f62.png)
+![SS_No-00032](https://user-images.githubusercontent.com/5540614/132476655-c01df937-6054-4e44-8008-4a243d4a663a.png)
 
 # 機能 / Features
 
