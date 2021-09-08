@@ -26,6 +26,7 @@ CookieAssistant.launch = function()
 				autoClickFortuneNews: 0,
 				autoClickWrinklers: 0,
 				autoSpellonBuff: 0,
+				autoBuyElderPledge: 0,
 			},
 			intervals:
 			{
@@ -35,6 +36,7 @@ CookieAssistant.launch = function()
 				autoClickFortuneNews: 100,
 				autoClickWrinklers: 60000,
 				autoSpellonBuff: 1000,
+				autoBuyElderPledge: 1000,
 			},
 		};
 
@@ -55,6 +57,7 @@ CookieAssistant.launch = function()
 			autoClickFortuneNews: null,
 			autoClickWrinklers: null,
 			autoSpellonBuff: null,
+			autoBuyElderPledge: null,
 		}
 
 		CookieAssistant.actions =
@@ -121,6 +124,19 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals["autoClickWrinklers"]
 				)
 			},
+			autoBuyElderPledge: () =>
+			{
+				CookieAssistant.intervalHandles["autoBuyElderPledge"] = setInterval(
+					() =>
+					{
+						if (Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Pledge"]) != -1)
+						{
+							Game.Upgrades["Elder Pledge"].buy();
+						}
+					},
+					CookieAssistant.config.intervals["autoBuyElderPledge"]
+				)
+			}
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -187,6 +203,11 @@ CookieAssistant.launch = function()
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick Wrinklers(シワシワ虫) ON', 'AutoClick Wrinklers(シワシワ虫) OFF', "CookieAssistant.Toggle")
 				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals["autoClickWrinklers"], "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
+				+ '</div>';
+		//ElderPedge自動購入
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ElderPledge(エルダー宣誓) ON', 'AutoBuy ElderPledge(エルダー宣誓) OFF', "CookieAssistant.Toggle")
+				+ '<label>\tInterval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals["autoBuyElderPledge"], "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)")
 				+ '</div>';
 		//自動詠唱
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast Hand of Fate ON', 'AutoSpellCast Hand of Fate ON', "CookieAssistant.Toggle")
