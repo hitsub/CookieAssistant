@@ -30,6 +30,17 @@ Steam版クッキークリッカーのアシストツールです。
 
 Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/download/CookieAssistant.zip)
 
+# 今後入れる予定の機能 / Future plan
+
+- EN
+  - Auto spellcasting 'Hand of Fate' during golden cookie buff
+  - Auto destroy Wrinklers
+  - Auto purchase Elder Pledge
+- JP
+  - 黄金クッキーによるバフ獲得中に自動で「運命を押し付ける」を詠唱
+  - シワシワ虫の自動撃退
+  - エルダー宣誓の自動購入
+
 # 互換性 / Compatibility
 
 Compatible with following mods.
