@@ -29,3 +29,21 @@ Steam版クッキークリッカーのアシストツールです。
 # ダウンロード / Download
 
 Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/download/CookieAssistant.zip)
+
+# 互換性 / Compatibility
+
+Compatible with following mods.
+
+以下のMODとの共存を確認しています。
+
+- [Cookie Monster](https://github.com/CookieMonsterTeam/CookieMonster)
+- [Idle Trading](https://klattmose.github.io/CookieClicker/)
+- [Horticookie](https://klattmose.github.io/CookieClicker/)
+
+# 注意事項 / Notes
+
+- EN
+  - Enabling all features at all times may cause the game to become progressively slower.Restarting game will fix it.
+- JP
+  - 常時すべての機能をONにしていると、ゲームが徐々に重くなることがあります。その場合はゲームを再起動してください。
+
