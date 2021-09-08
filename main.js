@@ -24,6 +24,7 @@ CookieAssistant.launch = function()
 				autoClickGoldenCookie: 0,
 				autoClickReindeer: 0,
 				autoClickFortuneNews: 0,
+				autoSpellonBuff: 0,
 			},
 			intervals:
 			{
@@ -31,6 +32,7 @@ CookieAssistant.launch = function()
 				autoClickGoldenCookie: 1,
 				autoClickReindeer: 100,
 				autoClickFortuneNews: 100,
+				autoSpellonBuff: 1000,
 			},
 		};
 
@@ -49,6 +51,7 @@ CookieAssistant.launch = function()
 			autoClickGoldenCookie: null,
 			autoReindeer: null,
 			autoFortuneNews: null,
+			autoSpellonBuff: null,
 		}
 
 		CookieAssistant.actions =
@@ -79,6 +82,30 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles["autoClickFortuneNews"] = setInterval(
 					() => { if (Game.TickerEffect && Game.TickerEffect.type == 'fortune') { Game.tickerL.click(); }},
 					CookieAssistant.config.intervals["autoClickFortuneNews"]
+				)
+			},
+			autoSpellonBuff: () =>
+			{
+				CookieAssistant.intervalHandles["autoSpellonBuff"] = setInterval(
+					() =>
+					{
+						var isFrenzy = false;
+						for (var i in Game.buffs)
+						{
+							if (Game.buffs[i].name == "Frenzy")
+							{
+								isFrenzy = true;
+							}
+						}
+						var grimoire = Game.ObjectsById[7].minigame;
+						var spell = grimoire.spells['hand of fate'];
+						var cost = Math.floor(spell.costMin + grimoire.magicM * spell.costPercent);
+						if (cost >= grimoire.magic && isFrenzy)
+						{
+							grimoire.castSpell(spell);
+						}
+					},
+					CookieAssistant.config.intervals["autoSpellonBuff"]
 				)
 			},
 		}
@@ -141,6 +168,15 @@ CookieAssistant.launch = function()
 				+ '<div class="listing">'
 					+ '<label>※フォーチュンクッキーのアップグレードを購入するまで有効にしても効果はありません</label><br />'
 					+ '<label>※Will not take effect until you purchase the fortune cookie upgrade.</label><br />'
+				+ '</div>'
+				+ '</div>';
+		//自動詠唱
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast Hand of Fate ON', 'AutoSpellCast Hand of Fate ON', "CookieAssistant.Toggle")
+				+ '<label>\tInterval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals["autoSpellonBuff"], "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)")
+				+ '<div class="listing">'
+					+ '<label>フィーバー効果(CPS7倍)中に呪文「運命を押し付ける」を自動で発動する</label><br />'
+					+ '<label>Automatically activate the spell "Hand of Fate" during the frenzy effect (7x CPS).</label><br />'
 				+ '</div>'
 				+ '</div>';
 
@@ -209,7 +245,6 @@ CookieAssistant.launch = function()
 		CookieAssistant.config = JSON.parse(str);
 		CookieAssistant.DoAction();
 	}
-
 	
 	CookieAssistant.CheckUpdate = async function()
 	{
