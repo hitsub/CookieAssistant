@@ -24,6 +24,7 @@ CookieAssistant.launch = function()
 				autoClickGoldenCookie: 0,
 				autoClickReindeer: 0,
 				autoClickFortuneNews: 0,
+				autoClickWrinklers: 0,
 				autoSpellonBuff: 0,
 			},
 			intervals:
@@ -32,6 +33,7 @@ CookieAssistant.launch = function()
 				autoClickGoldenCookie: 1,
 				autoClickReindeer: 100,
 				autoClickFortuneNews: 100,
+				autoClickWrinklers: 60000,
 				autoSpellonBuff: 1000,
 			},
 		};
@@ -51,6 +53,7 @@ CookieAssistant.launch = function()
 			autoClickGoldenCookie: null,
 			autoClickReindeer: null,
 			autoClickFortuneNews: null,
+			autoClickWrinklers: null,
 			autoSpellonBuff: null,
 		}
 
@@ -106,6 +109,16 @@ CookieAssistant.launch = function()
 						}
 					},
 					CookieAssistant.config.intervals["autoSpellonBuff"]
+				)
+			},
+			autoClickWrinklers: () =>
+			{
+				CookieAssistant.intervalHandles["autoClickWrinklers"] = setInterval(
+					() =>
+					{
+						Game.wrinklers.forEach(function(me){ if (me.close==1) me.hp = 0});
+					},
+					CookieAssistant.config.intervals["autoClickWrinklers"]
 				)
 			},
 		}
@@ -169,6 +182,11 @@ CookieAssistant.launch = function()
 					+ '<label>※フォーチュンクッキーのアップグレードを購入するまで有効にしても効果はありません</label><br />'
 					+ '<label>※Will not take effect until you purchase the fortune cookie upgrade.</label><br />'
 				+ '</div>'
+				+ '</div>';
+		//虫撃破
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick Wrinklers(シワシワ虫) ON', 'AutoClick Wrinklers(シワシワ虫) OFF', "CookieAssistant.Toggle")
+				+ '<label>\tInterval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals["autoClickWrinklers"], "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
 				+ '</div>';
 		//自動詠唱
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast Hand of Fate ON', 'AutoSpellCast Hand of Fate ON', "CookieAssistant.Toggle")
