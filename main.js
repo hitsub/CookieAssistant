@@ -49,8 +49,8 @@ CookieAssistant.launch = function()
 		{
 			autoClickBigCookie: null,
 			autoClickGoldenCookie: null,
-			autoReindeer: null,
-			autoFortuneNews: null,
+			autoClickReindeer: null,
+			autoClickFortuneNews: null,
 			autoSpellonBuff: null,
 		}
 
