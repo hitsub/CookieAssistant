@@ -36,7 +36,7 @@ Steam版クッキークリッカーのアシストツールです。
 
 Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/download/CookieAssistant.zip)
 
-[導入手順はこちら](https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882)
+[導入手順はこちら](https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882)  
 [Click here for installation instructions](https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882)
 
 # 今後入れる予定の機能 / Future plan
