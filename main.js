@@ -1,10 +1,10 @@
 if(CookieAssistant === undefined)
 {
-    var CookieAssistant = {};
+	var CookieAssistant = {};
 }
 if(typeof CCSE == 'undefined')
 {
-    Game.LoadMod('https://klattmose.github.io/CookieClicker/SteamMods/CCSE/main.js');
+	Game.LoadMod('https://klattmose.github.io/CookieClicker/SteamMods/CCSE/main.js');
 }
 
 CookieAssistant.name = 'Cookie Assistant';
@@ -15,9 +15,9 @@ CookieAssistant.GameVersion = '2.042';
 CookieAssistant.launch = function()
 {
 	CookieAssistant.defaultConfig = function()
-    {
+	{
 		var conf = 
-        {
+		{
 			flags:
 			{
 				autoClickBigCookie: 0,
@@ -44,7 +44,7 @@ CookieAssistant.launch = function()
 	}
 
 	CookieAssistant.init = function()
-    {
+	{
 		CookieAssistant.isLoaded = 1;
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
@@ -146,38 +146,38 @@ CookieAssistant.launch = function()
 	CookieAssistant.restoreDefaultConfig = function(mode){
 		CookieAssistant.config = CookieAssistant.defaultConfig();
 		if(mode == 2)
-        {
-            CookieAssistant.save(CookieAssistant.config);
-        }
-    }
+		{
+			CookieAssistant.save(CookieAssistant.config);
+		}
+	}
 
-    
+
 	//オプション&統計の追加
 	CookieAssistant.ReplaceGameMenu = function()
-    {
+	{
 		Game.customOptionsMenu.push(function()
-        {
+		{
 			CCSE.AppendCollapsibleOptionsMenu(CookieAssistant.name, CookieAssistant.getMenuString());
 		});
 		
 		Game.customStatsMenu.push(function()
-        {
+		{
 			CCSE.AppendStatsVersionNumber(CookieAssistant.name, CookieAssistant.version);
 		});
-    }
-    
+	}
+	
 	CookieAssistant.getMenuString = function()
-    {
-        let m = CCSE.MenuHelper;
-        str = m.Header('Assists');
+	{
+		let m = CCSE.MenuHelper;
+		str = m.Header('Assists');
 		//大クッキークリック
-        str +=  '<div class="listing">'
-                + m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
-                + '<label>\tInterval(ms) : </label>'
+		str +=  '<div class="listing">'
+				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
+				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals["autoClickBigCookie"], "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
-                + '</div>';
+				+ '</div>';
 		//黄金クッキークリック
-        str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick GoldenCookie ON', 'AutoClick GoldenCookie OFF', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick GoldenCookie ON', 'AutoClick GoldenCookie OFF', "CookieAssistant.Toggle")
 				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals["autoClickBigCookie"], "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
@@ -219,23 +219,23 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 
-        str += m.Header('Misc');
-        str += '<div class="listing">' + m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default') + '</div>';
+		str += m.Header('Misc');
+		str += '<div class="listing">' + m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default') + '</div>';
 
-        str += '<div class="listing">' + m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update') + '</div>';
+		str += '<div class="listing">' + m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update') + '</div>';
 
-        return str;
-    }
-    
+		return str;
+	}
+	
 	CookieAssistant.Toggle = function(prefName, button, on, off, invert)
-    {
+	{
 		if(CookieAssistant.config.flags[prefName])
-        {
+		{
 			l(button).innerHTML = off;
 			CookieAssistant.config.flags[prefName] = 0;
 		}
 		else
-        {
+		{
 			l(button).innerHTML = on;
 			CookieAssistant.config.flags[prefName] = 1;
 		}
@@ -273,14 +273,14 @@ CookieAssistant.launch = function()
 			}
 		}
 	}
-    
+	
 	CookieAssistant.save = function()
-    {
+	{
 		return JSON.stringify(CookieAssistant.config);
 	}
 
 	CookieAssistant.load = function(str)
-    {
+	{
 		CookieAssistant.config = JSON.parse(str);
 		CookieAssistant.DoAction();
 	}
@@ -301,19 +301,19 @@ CookieAssistant.launch = function()
 	}
 
 	if(CCSE.ConfirmGameVersion(CookieAssistant.name, CookieAssistant.version, CookieAssistant.GameVersion))
-    {
-        Game.registerMod(CookieAssistant.name, CookieAssistant);
-    }
+	{
+		Game.registerMod(CookieAssistant.name, CookieAssistant);
+	}
 }
 
 if(!CookieAssistant.isLoaded)
 {
 	if(CCSE && CCSE.isLoaded)
-    {
+	{
 		CookieAssistant.launch();
 	}
 	else
-    {
+	{
 		if(!CCSE) var CCSE = {};
 		if(!CCSE.postLoadHooks) CCSE.postLoadHooks = [];
 		CCSE.postLoadHooks.push(CookieAssistant.launch);
