@@ -50,6 +50,7 @@ Compatible with following mods.
 - [Cookie Monster](https://github.com/CookieMonsterTeam/CookieMonster)
 - [Idle Trading](https://klattmose.github.io/CookieClicker/)
 - [Horticookie](https://klattmose.github.io/CookieClicker/)
+- [CookieTooks](https://github.com/hideki0403/CookieTools/)
 
 # 注意事項 / Notes
 
