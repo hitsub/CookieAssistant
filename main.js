@@ -100,7 +100,7 @@ CookieAssistant.launch = function()
 						var grimoire = Game.ObjectsById[7].minigame;
 						var spell = grimoire.spells['hand of fate'];
 						var cost = Math.floor(spell.costMin + grimoire.magicM * spell.costPercent);
-						if (cost >= grimoire.magic && isFrenzy)
+						if (cost <= Math.floor(grimoire.magic) && isFrenzy)
 						{
 							grimoire.castSpell(spell);
 						}
