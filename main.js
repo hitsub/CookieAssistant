@@ -64,35 +64,35 @@ CookieAssistant.launch = function()
 		{
 			autoClickBigCookie: () =>
 			{
-				CookieAssistant.intervalHandles["autoClickBigCookie"] = setInterval(
+				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
 					() => { bigCookie.click(); Game.lastClick=0; },
-					CookieAssistant.config.intervals["autoClickBigCookie"]
+					CookieAssistant.config.intervals.autoClickBigCookie
 				)
 			},
 			autoClickGoldenCookie: () =>
 			{
-				CookieAssistant.intervalHandles["autoClickGoldenCookie"] = setInterval(
+				CookieAssistant.intervalHandles.autoClickGoldenCookie = setInterval(
 					() => { for (var h in Game.shimmers){if(Game.shimmers[h].type=="golden"){Game.shimmers[h].pop();}} },
-					CookieAssistant.config.intervals["autoClickGoldenCookie"]
+					CookieAssistant.config.intervals.autoClickGoldenCookie
 				)
 			},
 			autoClickReindeer: () =>
 			{
-				CookieAssistant.intervalHandles["autoClickReindeer"] = setInterval(
+				CookieAssistant.intervalHandles.autoClickReindeer = setInterval(
 					() => { for (var h in Game.shimmers){if(Game.shimmers[h].type=="reindeer"){Game.shimmers[h].pop();}} },
-					CookieAssistant.config.intervals["autoClickReindeer"]
+					CookieAssistant.config.intervals.autoClickReindeer
 				)
 			},
 			autoClickFortuneNews: () =>
 			{
-				CookieAssistant.intervalHandles["autoClickFortuneNews"] = setInterval(
+				CookieAssistant.intervalHandles.autoClickFortuneNews = setInterval(
 					() => { if (Game.TickerEffect && Game.TickerEffect.type == 'fortune') { Game.tickerL.click(); }},
-					CookieAssistant.config.intervals["autoClickFortuneNews"]
+					CookieAssistant.config.intervals.autoClickFortuneNews
 				)
 			},
 			autoSpellonBuff: () =>
 			{
-				CookieAssistant.intervalHandles["autoSpellonBuff"] = setInterval(
+				CookieAssistant.intervalHandles.autoSpellonBuff = setInterval(
 					() =>
 					{
 						var isFrenzy = false;
@@ -111,22 +111,22 @@ CookieAssistant.launch = function()
 							grimoire.castSpell(spell);
 						}
 					},
-					CookieAssistant.config.intervals["autoSpellonBuff"]
+					CookieAssistant.config.intervals.autoSpellonBuff
 				)
 			},
 			autoClickWrinklers: () =>
 			{
-				CookieAssistant.intervalHandles["autoClickWrinklers"] = setInterval(
+				CookieAssistant.intervalHandles.autoClickWrinklers = setInterval(
 					() =>
 					{
 						Game.wrinklers.forEach(function(me){ if (me.close==1) me.hp = 0});
 					},
-					CookieAssistant.config.intervals["autoClickWrinklers"]
+					CookieAssistant.config.intervals.autoClickWrinklers
 				)
 			},
 			autoBuyElderPledge: () =>
 			{
-				CookieAssistant.intervalHandles["autoBuyElderPledge"] = setInterval(
+				CookieAssistant.intervalHandles.autoBuyElderPledge = setInterval(
 					() =>
 					{
 						if (Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Pledge"]) != -1)
@@ -134,7 +134,7 @@ CookieAssistant.launch = function()
 							Game.Upgrades["Elder Pledge"].buy();
 						}
 					},
-					CookieAssistant.config.intervals["autoBuyElderPledge"]
+					CookieAssistant.config.intervals.autoBuyElderPledge
 				)
 			}
 		}
