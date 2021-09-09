@@ -27,6 +27,7 @@ CookieAssistant.launch = function()
 				autoClickWrinklers: 0,
 				autoSpellonBuff: 0,
 				autoBuyElderPledge: 0,
+				autoBuyUpgrades: 0,
 			},
 			intervals:
 			{
@@ -37,6 +38,7 @@ CookieAssistant.launch = function()
 				autoClickWrinklers: 60000,
 				autoSpellonBuff: 1000,
 				autoBuyElderPledge: 1000,
+				autoBuyUpgrades: 1000,
 			},
 		};
 
@@ -58,6 +60,7 @@ CookieAssistant.launch = function()
 			autoClickWrinklers: null,
 			autoSpellonBuff: null,
 			autoBuyElderPledge: null,
+			autoBuyUpgrades: null,
 		}
 
 		CookieAssistant.actions =
@@ -136,7 +139,26 @@ CookieAssistant.launch = function()
 					},
 					CookieAssistant.config.intervals.autoBuyElderPledge
 				)
-			}
+			},
+			autoBuyUpgrades: () =>
+			{
+				CookieAssistant.intervalHandles.autoBuyUpgrades = setInterval(
+					() =>
+					{
+						for (var i in Game.UpgradesInStore)
+						{
+							var upgrade = Game.UpgradesInStore[i];
+							//スイッチ類を除いて購入(ElderPledgeもToggle扱いなので考えなくてよい)
+							//生贄用めん棒はこっちでも勝手に買われる
+							if (upgrade.pool != "toggle")
+							{
+								upgrade.buy(1);
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoBuyUpgrades
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -209,6 +231,11 @@ CookieAssistant.launch = function()
 					+ '<label>フィーバー効果(CPS7倍)中に呪文「運命を押し付ける」を自動で発動する</label><br />'
 					+ '<label>Automatically activate the spell "Hand of Fate" during the frenzy effect (7x CPS).</label><br />'
 				+ '</div>'
+				+ '</div>';
+		//アップグレード自動購入
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy Upgrades ON', 'AutoSwitch Upgrades OFF', "CookieAssistant.Toggle")
+				+ '<label>\tInterval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals["autoBuyUpgrades"], "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
 				+ '</div>';
 
 		str += m.Header('Misc');
