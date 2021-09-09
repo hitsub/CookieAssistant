@@ -136,6 +136,11 @@ CookieAssistant.launch = function()
 						{
 							Game.Upgrades["Elder Pledge"].buy();
 						}
+						//ElderPledgeを自動購入してるんだったら生贄用めん棒も買ってほしいはずなのでこっちでも見る
+						if (Game.UpgradesInStore.indexOf(Game.Upgrades["Sacrificial rolling pins"]) != -1)
+						{
+							Game.Upgrades["Sacrificial rolling pins"].buy(1);
+						}
 					},
 					CookieAssistant.config.intervals.autoBuyElderPledge
 				)
@@ -222,6 +227,10 @@ CookieAssistant.launch = function()
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ElderPledge(エルダー宣誓) ON', 'AutoBuy ElderPledge(エルダー宣誓) OFF', "CookieAssistant.Toggle")
 				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals["autoBuyElderPledge"], "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)")
+				+ '<div class="listing">'
+					+ '<label>※この機能はアップグレードの生贄用めん棒も自動で購入するようになります。</label><br />'
+					+ '<label>NOTE: "Sacrificial rolling pins" will also be purchased automatically.</label><br />'
+				+ '</div>'
 				+ '</div>';
 		//自動詠唱
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast Hand of Fate ON', 'AutoSpellCast Hand of Fate ON', "CookieAssistant.Toggle")
