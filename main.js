@@ -185,19 +185,11 @@ CookieAssistant.launch = function()
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick Reindeer(トナカイ) ON', 'AutoClick Reindeer(トナカイ) OFF', "CookieAssistant.Toggle")
 				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals["autoClickReindeer"], "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)")
-				+ '<div class="listing">'
-					+ '<label>※クリスマスイベント中以外は有効にしても効果はありません</label><br />'
-					+ '<label>※Will not take effect except during Christmas events.</label><br />'
-				+ '</div>'
 				+ '</div>';
 		//FortuneNewsクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle")
 				+ '<label>\tInterval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals["autoClickFortuneNews"], "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)")
-				+ '<div class="listing">'
-					+ '<label>※フォーチュンクッキーのアップグレードを購入するまで有効にしても効果はありません</label><br />'
-					+ '<label>※Will not take effect until you purchase the fortune cookie upgrade.</label><br />'
-				+ '</div>'
 				+ '</div>';
 		//虫撃破
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick Wrinklers(シワシワ虫) ON', 'AutoClick Wrinklers(シワシワ虫) OFF', "CookieAssistant.Toggle")
