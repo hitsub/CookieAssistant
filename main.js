@@ -68,28 +68,56 @@ CookieAssistant.launch = function()
 			autoClickBigCookie: () =>
 			{
 				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
-					() => { bigCookie.click(); Game.lastClick=0; },
+					() =>
+					{
+						bigCookie.click();
+						Game.lastClick = 0;
+					},
 					CookieAssistant.config.intervals.autoClickBigCookie
 				)
 			},
 			autoClickGoldenCookie: () =>
 			{
 				CookieAssistant.intervalHandles.autoClickGoldenCookie = setInterval(
-					() => { for (var h in Game.shimmers){if(Game.shimmers[h].type=="golden"){Game.shimmers[h].pop();}} },
+					() =>
+					{
+						for (var i in Game.shimmers)
+						{
+							if(Game.shimmers[i].type == "golden")
+							{
+								Game.shimmers[i].pop();
+							}
+						}
+					},
 					CookieAssistant.config.intervals.autoClickGoldenCookie
 				)
 			},
 			autoClickReindeer: () =>
 			{
 				CookieAssistant.intervalHandles.autoClickReindeer = setInterval(
-					() => { for (var h in Game.shimmers){if(Game.shimmers[h].type=="reindeer"){Game.shimmers[h].pop();}} },
+					() =>
+					{
+						for (var i in Game.shimmers)
+						{
+							if(Game.shimmers[i].type == "reindeer")
+							{
+								Game.shimmers[i].pop();
+							}
+						}
+					},
 					CookieAssistant.config.intervals.autoClickReindeer
 				)
 			},
 			autoClickFortuneNews: () =>
 			{
 				CookieAssistant.intervalHandles.autoClickFortuneNews = setInterval(
-					() => { if (Game.TickerEffect && Game.TickerEffect.type == 'fortune') { Game.tickerL.click(); }},
+					() =>
+					{
+						if (Game.TickerEffect && Game.TickerEffect.type == 'fortune')
+						{
+							Game.tickerL.click();
+						}
+					},
 					CookieAssistant.config.intervals.autoClickFortuneNews
 				)
 			},
@@ -200,51 +228,51 @@ CookieAssistant.launch = function()
 		//大クッキークリック
 		str +=  '<div class="listing">'
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals["autoClickBigCookie"], "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
 		//黄金クッキークリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick GoldenCookie ON', 'AutoClick GoldenCookie OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals["autoClickBigCookie"], "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
 		//トナカクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick Reindeer(トナカイ) ON', 'AutoClick Reindeer(トナカイ) OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals["autoClickReindeer"], "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals.autoClickReindeer, "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)")
 				+ '</div>';
 		//FortuneNewsクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals["autoClickFortuneNews"], "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals.autoClickFortuneNews, "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)")
 				+ '</div>';
 		//虫撃破
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick Wrinklers(シワシワ虫) ON', 'AutoClick Wrinklers(シワシワ虫) OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals["autoClickWrinklers"], "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
 				+ '</div>';
 		//ElderPedge自動購入
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ElderPledge(エルダー宣誓) ON', 'AutoBuy ElderPledge(エルダー宣誓) OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals["autoBuyElderPledge"], "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals.autoBuyElderPledge, "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)")
 				+ '<div class="listing">'
 					+ '<label>※この機能はアップグレードの生贄用めん棒も自動で購入するようになります。</label><br />'
-					+ '<label>NOTE: "Sacrificial rolling pins" will also be purchased automatically.</label><br />'
+					+ '<label>This feature will also automatically purchase "Sacrificial rolling pins".</label><br />'
 				+ '</div>'
 				+ '</div>';
 		//自動詠唱
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast Hand of Fate ON', 'AutoSpellCast Hand of Fate ON', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals["autoSpellonBuff"], "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals.autoSpellonBuff, "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)")
 				+ '<div class="listing">'
 					+ '<label>フィーバー効果(CPS7倍)中に呪文「運命を押し付ける」を自動で発動する</label><br />'
 					+ '<label>Automatically activate the spell "Hand of Fate" during the frenzy effect (7x CPS).</label><br />'
 				+ '</div>'
 				+ '</div>';
 		//アップグレード自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy Upgrades ON', 'AutoSwitch Upgrades OFF', "CookieAssistant.Toggle")
-				+ '<label>\tInterval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals["autoBuyUpgrades"], "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy Upgrades ON', 'AutoBuy Upgrades OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
 				+ '</div>';
 
 		str += m.Header('Misc');
