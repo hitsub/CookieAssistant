@@ -39,6 +39,9 @@ Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/downlo
 [導入手順はこちら](https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882)  
 [Click here for installation instructions](https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882)
 
+※前提MODとして[CCSE](https://klattmose.github.io/CookieClicker/)が必要です。詳しくは上記のURLから手順をご覧ください。  
+[CCSE](https://klattmose.github.io/CookieClicker/) is required as a prerequisite mod. For details, please see the instructions at the URL above.
+
 # 今後入れる予定の機能 / Future plan
 
 - EN
