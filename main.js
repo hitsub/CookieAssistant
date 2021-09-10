@@ -28,6 +28,7 @@ CookieAssistant.launch = function()
 				autoSpellonBuff: 0,
 				autoBuyElderPledge: 0,
 				autoBuyUpgrades: 0,
+				autoSwitchSeason: 0,
 			},
 			intervals:
 			{
@@ -39,6 +40,7 @@ CookieAssistant.launch = function()
 				autoSpellonBuff: 1000,
 				autoBuyElderPledge: 1000,
 				autoBuyUpgrades: 1000,
+				autoSwitchSeason: 3000,
 			},
 		};
 
@@ -61,6 +63,7 @@ CookieAssistant.launch = function()
 			autoSpellonBuff: null,
 			autoBuyElderPledge: null,
 			autoBuyUpgrades: null,
+			autoSwitchSeason: null,
 		}
 
 		CookieAssistant.actions =
@@ -192,6 +195,96 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoBuyUpgrades
 				);
 			},
+			autoSwitchSeason: () =>
+			{
+				CookieAssistant.intervalHandles.autoSwitchSeason = setInterval(
+					() =>
+					{
+						var winterSantaRate = Game.GetHowManySantaDrops() / Game.santaDrops.length;
+						var winterReindeerRate = Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length;
+						var halloweenRate = Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length;
+						var easterRate = Game.GetHowManyEggs() / Game.easterEggs.length;
+						var valentinesRate = Game.GetHowManyHeartDrops() / Game.heartDrops.length;
+
+						// Game.Upgrades['Festive biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.santaDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManySantaDrops()+'/'+Game.santaDrops.length+'</b> of Santa\'s gifts.'):loc("Seasonal cookies purchased: <b>%1</b>.",Game.GetHowManySantaDrops()+'/'+Game.santaDrops.length))+'<div class="line"></div>'+Game.listTinyOwnedUpgrades(Game.reindeerDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyReindeerDrops()+'/'+Game.reindeerDrops.length+'</b> reindeer cookies.'):loc("Reindeer cookies purchased: <b>%1</b>.",Game.GetHowManyReindeerDrops()+'/'+Game.reindeerDrops.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
+						// Game.Upgrades['Bunny biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.easterEggs)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyEggs()+'/'+Game.easterEggs.length+'</b> eggs.'):loc("Eggs purchased: <b>%1</b>.",Game.GetHowManyEggs()+'/'+Game.easterEggs.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
+						// Game.Upgrades['Ghostly biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.halloweenDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyHalloweenDrops()+'/'+Game.halloweenDrops.length+'</b> halloween cookies.'):loc("Seasonal cookies purchased: <b>%1</b>.",Game.GetHowManyHalloweenDrops()+'/'+Game.halloweenDrops.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
+						// Game.Upgrades['Lovesick biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.heartDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyHeartDrops()+'/'+Game.heartDrops.length+'</b> heart biscuits.'):loc("Seasonal cookies purchased: <b>%1</b>.",Game.GetHowManyHeartDrops()+'/'+Game.heartDrops.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
+						// Game.Upgrades['Fool\'s biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
+
+						// Game.seasons={
+						// 	'christmas':{name:'Christmas',start:'Christmas season has started!',over:'Christmas season is over.',trigger:'Festive biscuit'},
+						// 	'valentines':{name:'Valentine\'s day',start:'Valentine\'s day has started!',over:'Valentine\'s day is over.',trigger:'Lovesick biscuit'},
+						// 	'fools':{name:'Business day',start:'Business day has started!',over:'Business day is over.',trigger:'Fool\'s biscuit'},
+						// 	'easter':{name:'Easter',start:'Easter season has started!',over:'Easter season is over.',trigger:'Bunny biscuit'},
+						// 	'halloween':{name:'Halloween',start:'Halloween has started!',over:'Halloween is over.',trigger:'Ghostly biscuit'}
+						// };
+
+						if (Game.season == "")
+						{
+							CookieAssistant.SwitchNextSeason();
+						}
+						else if (Game.season == "valentines")
+						{
+							if (valentinesRate >= 1)
+							{
+								console.log("Complete Valentines");
+								CookieAssistant.SwitchNextSeason();
+							}
+						}
+						else if (Game.season == "christmas")
+						{
+							if (winterSantaRate < 1 || Game.santaLevel < 14)
+							{
+								Game.UpgradeSanta();
+							}
+							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
+							{
+								console.log("Complete Christmas");
+								CookieAssistant.SwitchNextSeason();
+							}
+						}
+						else if (Game.season == "easter")
+						{
+							if (easterRate >= 1)
+							{
+								console.log("Complete Easter");
+								CookieAssistant.SwitchNextSeason();
+							}
+						}
+						else if (Game.season == "halloween")
+						{
+							//エルダー宣誓の自動購入がONのときは強制OFFにする
+							if (CookieAssistant.config.flags.autoBuyElderPledge == 1)
+							{
+								CookieAssistant.config.flags.autoBuyElderPledge = 0;
+								clearInterval(CookieAssistant.intervalHandles.autoBuyElderPledge);
+								CookieAssistant.intervalHandles.autoBuyElderPledge = null;								
+							}
+							//エルダー宣誓の時間が残っている場合はエルダー誓約を発動する(エルダー宣誓の時間リセットのため)
+							if (Game.pledgeT >= 1 && Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
+							{
+								console.log("Buy Elder Covenant");
+								Game.Upgrades["Elder Covenant"].buy();
+							}
+							//エルダー誓約の撤回が出来る場合はする（Wrinklerをスポーンさせる必要があるため）
+							if (Game.UpgradesInStore.indexOf(Game.Upgrades["Revoke Elder Covenant"]) != -1)
+							{
+								console.log("Buy Revoke Elder Covenant");
+								Game.Upgrades["Revoke Elder Covenant"].buy();
+							}
+							if (halloweenRate >= 1)
+							{
+								console.log("Complete Halloween");
+								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
+								Game.Upgrades["Elder Covenant"].buy(1);
+								CookieAssistant.SwitchNextSeason();
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoSwitchSeason
+				)
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -203,6 +296,48 @@ CookieAssistant.launch = function()
 		if(mode == 2)
 		{
 			CookieAssistant.save(CookieAssistant.config);
+		}
+	}
+
+	CookieAssistant.SwitchNextSeason = function()
+	{
+		var seasons = ["valentines", "christmas", "easter", "halloween"];
+		var isCompletes = [
+			(Game.GetHowManyHeartDrops() / Game.heartDrops.length) >= 1,
+			((Game.GetHowManySantaDrops() / Game.santaDrops.length) >= 1) && ((Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length) >= 1) && Game.santaLevel >= 14,
+			(Game.GetHowManyEggs() / Game.easterEggs.length) >= 1,
+			(Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length) >= 1,
+		];
+		
+		var targetSeason = "";
+		console.log("シーズン獲得状況 : ");
+		console.log(isCompletes);
+		
+		for (var i in seasons)
+		{
+			if (!isCompletes[i])
+			{
+				targetSeason = seasons[i];
+				break;
+			}
+		}
+		//全シーズンのアップグレードが完了していて現在どこかのシーズンになっている時、現在のシーズンを解除する
+		if (Game.season != "" && targetSeason == "")
+		{
+			targetSeason = Game.season;
+		}
+		if (targetSeason != "")
+		{
+			console.log("ChangeSeason : " + targetSeason);
+			if (targetSeason == Game.season)
+			{
+				//値の直接書き換えになってしまうが、内部のシーズンキャンセルの挙動もこれなので許してくれ
+				Game.seasonT = -1;
+			}
+			else if (Game.UpgradesInStore.indexOf(Game.Upgrades[Game.seasons[targetSeason].trigger]) != -1)
+			{
+				Game.Upgrades[Game.seasons[targetSeason].trigger].buy(1);
+			}
 		}
 	}
 
@@ -275,6 +410,17 @@ CookieAssistant.launch = function()
 				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
 				+ '</div>';
 
+		//シーズン自動切換え
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSwitchSeason', 'CookieAssistant_autoSwitchSeason', 'AutoSwitch Seasons ON (Experimental)', 'AutoSwitch Seasons OFF (Experimental)', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)")
+				+ '<div class="listing">'
+					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。詳細はSteamガイドを見てください。</label><br />'
+					+ '<label>Automatically switch to seasons in which the upgrade is still remained. See the Steam guide for more details.</label><br />'
+				+ '</div>'
+				+ '</div>';
+
+		str += "<br>"
 		str += m.Header('Misc');
 		str += '<div class="listing">' + m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default') + '</div>';
 
