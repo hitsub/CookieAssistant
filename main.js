@@ -228,7 +228,7 @@ CookieAssistant.launch = function()
 						{
 							if (valentinesRate >= 1)
 							{
-								console.log("Complete Valentines");
+								// console.log("Complete Valentines");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -240,7 +240,7 @@ CookieAssistant.launch = function()
 							}
 							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
 							{
-								console.log("Complete Christmas");
+								// console.log("Complete Christmas");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -248,7 +248,7 @@ CookieAssistant.launch = function()
 						{
 							if (easterRate >= 1)
 							{
-								console.log("Complete Easter");
+								// console.log("Complete Easter");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -264,18 +264,18 @@ CookieAssistant.launch = function()
 							//エルダー宣誓の時間が残っている場合はエルダー誓約を発動する(エルダー宣誓の時間リセットのため)
 							if (Game.pledgeT >= 1 && Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
 							{
-								console.log("Buy Elder Covenant");
+								// console.log("Buy Elder Covenant");
 								Game.Upgrades["Elder Covenant"].buy();
 							}
 							//エルダー誓約の撤回が出来る場合はする（Wrinklerをスポーンさせる必要があるため）
 							if (Game.UpgradesInStore.indexOf(Game.Upgrades["Revoke Elder Covenant"]) != -1)
 							{
-								console.log("Buy Revoke Elder Covenant");
+								// console.log("Buy Revoke Elder Covenant");
 								Game.Upgrades["Revoke Elder Covenant"].buy();
 							}
 							if (halloweenRate >= 1)
 							{
-								console.log("Complete Halloween");
+								// console.log("Complete Halloween");
 								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
 								Game.Upgrades["Elder Covenant"].buy(1);
 								CookieAssistant.SwitchNextSeason();
@@ -310,8 +310,8 @@ CookieAssistant.launch = function()
 		];
 		
 		var targetSeason = "";
-		console.log("シーズン獲得状況 : ");
-		console.log(isCompletes);
+		// console.log("シーズン獲得状況 : ");
+		// console.log(isCompletes);
 		
 		for (var i in seasons)
 		{
@@ -328,7 +328,7 @@ CookieAssistant.launch = function()
 		}
 		if (targetSeason != "")
 		{
-			console.log("ChangeSeason : " + targetSeason);
+			// console.log("ChangeSeason : " + targetSeason);
 			if (targetSeason == Game.season)
 			{
 				//値の直接書き換えになってしまうが、内部のシーズンキャンセルの挙動もこれなので許してくれ
