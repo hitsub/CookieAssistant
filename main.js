@@ -341,6 +341,27 @@ CookieAssistant.launch = function()
 		}
 	}
 
+	//コンフィグのチェック
+	//アプデ時に新規項目がundefinedになって1ms周期の実行になってしまうのを防止
+	CookieAssistant.CheckConfig = function()
+	{		
+		var defaultConfig = CookieAssistant.defaultConfig();
+		for (const [key, value] of Object.entries(defaultConfig.flags))
+		{
+			if (CookieAssistant.config.flags[key] == undefined)
+			{
+				CookieAssistant.config.flags[key] = value;
+			}
+		}
+		for (const [key, value] of Object.entries(defaultConfig.intervals))
+		{
+			if (CookieAssistant.config.intervals[key] == undefined)
+			{
+				CookieAssistant.config.intervals[key] = value;
+			}
+		}
+	}
+
 
 	//オプション&統計の追加
 	CookieAssistant.ReplaceGameMenu = function()
@@ -484,6 +505,7 @@ CookieAssistant.launch = function()
 	CookieAssistant.load = function(str)
 	{
 		CookieAssistant.config = JSON.parse(str);
+		CookieAssistant.CheckConfig();
 		CookieAssistant.DoAction();
 	}
 	
