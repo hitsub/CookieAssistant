@@ -45,10 +45,14 @@ Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/downlo
   - Auto buy upgrades
   - Auto switch to seasons with remaining upgrades
   - Auto buy buildings
+  - Auto set spirits to slots in the pantheon.
+  - Auto train dragon and set auras.
 - JP
   - アップグレードの自動購入
   - アップグレードが終わってないシーズンへの自動切換え
   - 建物の自動購入
+  - パンテオンの自動セット
+  - ドラゴンの自動育成 + オーラの自動セット
 
 # 互換性 / Compatibility
 
