@@ -5,7 +5,7 @@ Does not support direct rewriting of values or giving items.
 Steam版クッキークリッカーのアシストツールです。  
 値の直接書き換えやアイテムの付与といったことには対応しません。
 
-![SS_No-00032](https://user-images.githubusercontent.com/5540614/132476655-c01df937-6054-4e44-8008-4a243d4a663a.png)
+![SS_No-00041](https://user-images.githubusercontent.com/5540614/132854686-9eb88f2b-1af8-4730-98a7-6df32cd262a7.png)
 
 # 機能 / Features
 
@@ -17,7 +17,13 @@ Steam版クッキークリッカーのアシストツールです。
   - Auto spellcasting 'Hand of Fate' during frenzy effect
   - Auto destroy Wrinklers
   - Auto purchase Elder Pledge
-  - Enabling/Disabling the above features
+    - The "Sacrificial rolling pins" will also be purchased automatically.
+  - Auto buy Upgrades
+  - Auto switch to seasons with remaining upgrades
+    - Upgrades of Santa will also be done automatically.
+    - If "ElderPledge" or "ElderCovenant" is valid on Halloween, "Revoke Elder Covenant" will be purchased automatically.
+    - If feature "Auto purchase ElderPledge" is enabled on Halloween, it will be automatically disabled.
+    - By using this function together with "Auto click GoldenCookie", "Auto buy Upgrades" and "Auto destroy Wrinklers", you can fully automate the acquisition of all upgrades of seasons.
   - Setting the interval for the above features
   - Check update this mod
 - JP
@@ -28,7 +34,13 @@ Steam版クッキークリッカーのアシストツールです。
   - フィーバー中に自動で「運命を押し付ける」を詠唱
   - シワシワ虫の自動撃退
   - エルダー宣誓の自動購入
-  - これらの機能のON/OFF切り替え
+    - 「生贄用めん棒」も自動購入するようになります
+  - アップグレードの自動購入
+  - アップグレードが終わってないシーズンへの自動切換え
+    - サンタのアップグレードも自動的に行われます
+    - ハロウィンの時にエルダー宣誓/エルダー誓約が有効であれば、自動的にエルダー誓約の撤回を行います
+    - ハロウィンの時に「エルダー宣誓の自動購入」がONになっている場合、自動的に無効化されます
+    - 「黄金クッキーの自動クリック」「アップグレードの自動購入」「シワシワ虫の自動撃退」と合わせて使うことでシーズンアップグレードの取得が完全自動で行えます
   - これらの機能の実行間隔の設定
   - このMODのアプデチェック
 
@@ -45,14 +57,10 @@ Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/downlo
 # 今後入れる予定の機能 / Future plan
 
 - EN
-  - Auto buy upgrades
-  - Auto switch to seasons with remaining upgrades
   - Auto buy buildings
   - Auto set spirits to slots in the pantheon.
   - Auto train dragon and set auras.
 - JP
-  - アップグレードの自動購入
-  - アップグレードが終わってないシーズンへの自動切換え
   - 建物の自動購入
   - パンテオンの自動セット
   - ドラゴンの自動育成 + オーラの自動セット
