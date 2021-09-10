@@ -40,7 +40,7 @@ CookieAssistant.launch = function()
 				autoSpellonBuff: 1000,
 				autoBuyElderPledge: 1000,
 				autoBuyUpgrades: 1000,
-				autoSwitchSeason: 3000,
+				autoSwitchSeason: 1000,
 			},
 		};
 
