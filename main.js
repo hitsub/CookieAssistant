@@ -137,17 +137,17 @@ CookieAssistant.launch = function()
 				0:
 				{
 					amount: 10,
-					desc: "Buy every 10 pieces",
+					desc: "Buy every 10 pieces / 10個単位で購入する",
 				},
 				1:
 				{
 					amount: 50,
-					desc: "Buy every 50 pieces",
+					desc: "Buy every 50 pieces / 50個単位で購入する",
 				},
 				2:
 				{
 					amount: 100,
-					desc: "Buy every 100 pieces",
+					desc: "Buy every 100 pieces / 100個単位で購入する",
 				},
 			},
 		}
