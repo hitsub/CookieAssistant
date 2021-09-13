@@ -32,6 +32,7 @@ CookieAssistant.launch = function()
 				autoBuyBuildings: 0,
 				autoSwitchSeason: 0,
 				autoTrainDragon : 0,
+				autoSetSpirits : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -47,6 +48,7 @@ CookieAssistant.launch = function()
 				autoBuyBuildings: 1000,
 				autoSwitchSeason: 1000,
 				autoTrainDragon : 1000,
+				autoSetSpirits : 10000,
 			},
 			//各機能の特殊設定
 			particular:
@@ -67,6 +69,12 @@ CookieAssistant.launch = function()
 				buildings:
 				{
 					mode: 0,
+				},
+				spirits:
+				{
+					slot1: 0,
+					slot2: 1,
+					slot3: 2,
 				},
 			}
 		};
@@ -93,6 +101,7 @@ CookieAssistant.launch = function()
 			autoBuyBuildings: null,
 			autoSwitchSeason: null,
 			autoTrainDragon : null,
+			autoSetSpirits : null,
 		}
 
 		CookieAssistant.modes =
@@ -429,6 +438,37 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoTrainDragon
 				);
 			},
+			autoSetSpirits : () =>
+			{
+				CookieAssistant.intervalHandles.autoSetSpirits = setInterval(
+					() =>
+					{
+						var pantheon = Game.Objects['Temple'].minigame;
+						if (pantheon.slot[0] == -1)
+						{
+							pantheon.dragGod(pantheon.godsById[CookieAssistant.config.particular.spirits.slot1]);
+							pantheon.hoverSlot(0);
+							pantheon.dropGod();
+							pantheon.hoverSlot(-1);
+						}
+						if (pantheon.slot[1] == -1)
+						{
+							pantheon.dragGod(pantheon.godsById[CookieAssistant.config.particular.spirits.slot2]);
+							pantheon.hoverSlot(1);
+							pantheon.dropGod();
+							pantheon.hoverSlot(-1);
+						}
+						if (pantheon.slot[2] == -1)
+						{
+							pantheon.dragGod(pantheon.godsById[CookieAssistant.config.particular.spirits.slot3]);
+							pantheon.hoverSlot(2);
+							pantheon.dropGod();
+							pantheon.hoverSlot(-1);
+						}
+					},
+					CookieAssistant.config.intervals.autoSetSpirits
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -636,6 +676,26 @@ CookieAssistant.launch = function()
 							+ Game.dragonAuras[CookieAssistant.config.particular.dragon.aura2].dname
 						+ '</a><br />'
 				+ '</div>'
+				+ '</div>';
+
+		//パンテオンのスロット自動セット
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSetSpirits', 'CookieAssistant_autoSetSpirits', 'AutoSet Spirits ON', 'AutoSet Spirits OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoSetSpirits", 40, CookieAssistant.config.intervals.autoSetSpirits, "CookieAssistant.ChangeInterval('autoSetSpirits', this.value)")
+				+ '<div class="listing">'
+					+ '<label>Diamond : </label>'
+					+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot1++; if(CookieAssistant.config.particular.spirits.slot1 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot1 = 0;} Game.UpdateMenu();">`
+						+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot1].name
+					+ '</a>'
+					+ '<label>Ruby : </label>'
+					+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot2++; if(CookieAssistant.config.particular.spirits.slot2 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot2 = 0;} Game.UpdateMenu();">`
+						+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot2].name
+					+ '</a>'
+					+ '<label>Jade : </label>'
+					+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot3++; if(CookieAssistant.config.particular.spirits.slot3 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot3 = 0;} Game.UpdateMenu();">`
+						+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot3].name
+					+ '</a>'
+					+ '</div>'
 				+ '</div>';
 
 		str += "<br>"
