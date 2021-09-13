@@ -393,7 +393,7 @@ CookieAssistant.launch = function()
 			},
 			autoBuyBuildings: () =>
 			{
-				CookieAssistant.intervalHandles.autoBuyUpgrades = setInterval(
+				CookieAssistant.intervalHandles.autoBuyBuildings = setInterval(
 					() =>
 					{
 						var amountPerPurchase = CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].amount;
@@ -417,7 +417,7 @@ CookieAssistant.launch = function()
 							}
 						}
 					},
-					CookieAssistant.config.intervals.autoBuyUpgrades
+					CookieAssistant.config.intervals.autoBuyBuildings
 				);
 			},
 			autoTrainDragon : () =>
