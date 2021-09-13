@@ -448,7 +448,7 @@ CookieAssistant.launch = function()
 	CookieAssistant.getMenuString = function()
 	{
 		let m = CCSE.MenuHelper;
-		str = m.Header('Assists');
+		str = m.Header('Basic Assists');
 		//大クッキークリック
 		str +=  '<div class="listing">'
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
@@ -456,12 +456,12 @@ CookieAssistant.launch = function()
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
 		//黄金クッキークリック
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick GoldenCookie ON', 'AutoClick GoldenCookie OFF', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
 		//トナカクリック
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick Reindeer(トナカイ) ON', 'AutoClick Reindeer(トナカイ) OFF', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick ' + loc("Reindeer") + ' ON', 'AutoClick ' + loc("Reindeer") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals.autoClickReindeer, "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)")
 				+ '</div>';
@@ -471,12 +471,12 @@ CookieAssistant.launch = function()
 				+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals.autoClickFortuneNews, "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)")
 				+ '</div>';
 		//虫撃破
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick Wrinklers(シワシワ虫) ON', 'AutoClick Wrinklers(シワシワ虫) OFF', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
 				+ '</div>';
 		//ElderPedge自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ElderPledge(エルダー宣誓) ON', 'AutoBuy ElderPledge(エルダー宣誓) OFF', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' ON', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals.autoBuyElderPledge, "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)")
 				+ '<div class="listing">'
@@ -484,8 +484,22 @@ CookieAssistant.launch = function()
 					+ '<label>This feature will also automatically purchase "Sacrificial rolling pins".</label><br />'
 				+ '</div>'
 				+ '</div>';
+		//アップグレード自動購入
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy ' + loc("upgrade") + ' ON', 'AutoBuy ' + loc("upgrade") + ' OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
+				+ '</div>';
+		//建物自動購入
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyBuildings', 'CookieAssistant_autoBuyBuildings', 'AutoBuy ' + loc("building") + ' ON', 'AutoBuy ' + loc("building") + ' OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyBuildings", 40, CookieAssistant.config.intervals.autoBuyBuildings, "CookieAssistant.ChangeInterval('autoBuyBuildings', this.value)")
+				+ '</div>';
+		
+		str += "<br>"
+		str += m.Header('Advanced Assists');
+
 		//自動詠唱
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast Hand of Fate ON', 'AutoSpellCast Hand of Fate ON', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast "' + loc("Force the Hand of Fate") + '" ON', 'AutoSpellCast "' + loc("Force the Hand of Fate") + '" OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals.autoSpellonBuff, "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)")
 				+ '<div class="listing">'
@@ -493,17 +507,7 @@ CookieAssistant.launch = function()
 					+ '<label>Automatically activate the spell "Hand of Fate" during the frenzy effect (7x CPS).</label><br />'
 				+ '</div>'
 				+ '</div>';
-		//アップグレード自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy Upgrades ON', 'AutoBuy Upgrades OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
-				+ '</div>';
-		//建物自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyBuildings', 'CookieAssistant_autoBuyBuildings', 'AutoBuy Buildings ON', 'AutoBuy Buildings OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyBuildings", 40, CookieAssistant.config.intervals.autoBuyBuildings, "CookieAssistant.ChangeInterval('autoBuyBuildings', this.value)")
-				+ '</div>';
-
+		
 		//シーズン自動切換え
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSwitchSeason', 'CookieAssistant_autoSwitchSeason', 'AutoSwitch Seasons ON', 'AutoSwitch Seasons OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
@@ -522,21 +526,20 @@ CookieAssistant.launch = function()
 					+ '<label>Aura1 : </label>'
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.dragon.aura1++; if(CookieAssistant.config.particular.dragon.aura1 >= Object.keys(Game.dragonAuras).length){CookieAssistant.config.particular.dragon.aura1 = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ Game.dragonAuras[CookieAssistant.config.particular.dragon.aura1].dname
-						+ '</a><br />'
-					+ '<label>Aura2 : </label>'
+						+ '</a>'
+					+ '<label>      Aura2 : </label>'
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.dragon.aura2++; if(CookieAssistant.config.particular.dragon.aura2 >= Object.keys(Game.dragonAuras).length){CookieAssistant.config.particular.dragon.aura2 = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ Game.dragonAuras[CookieAssistant.config.particular.dragon.aura2].dname
 						+ '</a><br />'
-					+ '<label>調整が効かないため、ドラゴンの最大育成が面倒に感じるまで使用しないことをお勧めします。</label><br />'
-					+ "<label>RECOMMEND : You don't enable it until it becomes a hassle to train your dragon to the maximum each time reincarnate.</label><br />"
 				+ '</div>'
 				+ '</div>';
 
 		str += "<br>"
 		str += m.Header('Misc');
-		str += '<div class="listing">' + m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default') + '</div>';
-
-		str += '<div class="listing">' + m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update') + '</div>';
+		str += '<div class="listing">'
+				+ m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default')
+				+ m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update')
+			+ '</div>';
 
 		return str;
 	}
