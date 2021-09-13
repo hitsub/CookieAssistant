@@ -29,6 +29,7 @@ CookieAssistant.launch = function()
 				autoBuyElderPledge: 0,
 				autoBuyUpgrades: 0,
 				autoSwitchSeason: 0,
+				autoTrainDragon : 0,
 			},
 			intervals:
 			{
@@ -41,7 +42,16 @@ CookieAssistant.launch = function()
 				autoBuyElderPledge: 1000,
 				autoBuyUpgrades: 1000,
 				autoSwitchSeason: 1000,
+				autoTrainDragon : 1000,
 			},
+			particular:
+			{
+				dragon:
+				{
+					aura1: 0,
+					aura2: 0,
+				}
+			}
 		};
 
 		return conf;
@@ -64,6 +74,7 @@ CookieAssistant.launch = function()
 			autoBuyElderPledge: null,
 			autoBuyUpgrades: null,
 			autoSwitchSeason: null,
+			autoTrainDragon : null,
 		}
 
 		CookieAssistant.actions =
@@ -285,6 +296,24 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoSwitchSeason
 				)
 			},
+			autoTrainDragon : () =>
+			{
+				CookieAssistant.intervalHandles.autoTrainDragon = setInterval(
+					() =>
+					{
+						if (Game.dragonLevel < Game.dragonLevels.length - 1 && Game.dragonLevels[Game.dragonLevel].cost())
+						{
+							Game.UpgradeDragon();
+							if (Game.dragonLevel == Game.dragonLevels.length - 1)
+							{
+								Game.dragonAura = CookieAssistant.config.particular.dragon.aura1;
+								Game.dragonAura2 = CookieAssistant.config.particular.dragon.aura2;
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoTrainDragon
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -359,6 +388,14 @@ CookieAssistant.launch = function()
 			{
 				CookieAssistant.config.intervals[key] = value;
 			}
+		}
+		if (CookieAssistant.config.particular == undefined)
+		{
+			CookieAssistant.config.particular = defaultConfig.particular;
+		}
+		if (CookieAssistant.config.particular.dragon == undefined)
+		{
+			CookieAssistant.config.particular.dragon = defaultConfig.particular.dragon;
 		}
 	}
 
@@ -438,6 +475,24 @@ CookieAssistant.launch = function()
 				+ '<div class="listing">'
 					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。詳細はSteamガイドを見てください。</label><br />'
 					+ '<label>Automatically switch to seasons in which the upgrade is still remained. See the Steam guide for more details.</label><br />'
+				+ '</div>'
+				+ '</div>';
+
+		//ドラゴン自動育成
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoTrainDragon', 'CookieAssistant_autoTrainDragon', 'AutoTrain Dragon ON', 'AutoTrain Dragon OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoTrainDragon", 40, CookieAssistant.config.intervals.autoTrainDragon, "CookieAssistant.ChangeInterval('autoTrainDragon', this.value)")
+				+ '<div class="listing">'
+					+ '<label>Aura1 : </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.dragon.aura1++; if(CookieAssistant.config.particular.dragon.aura1 >= Object.keys(Game.dragonAuras).length){CookieAssistant.config.particular.dragon.aura1 = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ Game.dragonAuras[CookieAssistant.config.particular.dragon.aura1].dname
+						+ '</a><br />'
+					+ '<label>Aura2 : </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.dragon.aura2++; if(CookieAssistant.config.particular.dragon.aura2 >= Object.keys(Game.dragonAuras).length){CookieAssistant.config.particular.dragon.aura2 = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ Game.dragonAuras[CookieAssistant.config.particular.dragon.aura2].dname
+						+ '</a><br />'
+					+ '<label>調整が効かないため、ドラゴンの最大育成が面倒に感じるまで使用しないことをお勧めします。</label><br />'
+					+ "<label>RECOMMEND : You don't enable it until it becomes a hassle to train your dragon to the maximum each time reincarnate.</label><br />"
 				+ '</div>'
 				+ '</div>';
 
