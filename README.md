@@ -5,7 +5,7 @@ Does not support direct rewriting of values or giving items.
 Steam版クッキークリッカーのアシストツールです。  
 値の直接書き換えやアイテムの付与といったことには対応しません。
 
-![SS_No-00041](https://user-images.githubusercontent.com/5540614/132854686-9eb88f2b-1af8-4730-98a7-6df32cd262a7.png)
+![SS_No-00043](https://user-images.githubusercontent.com/5540614/133083723-ad57c613-7fe9-442b-90d4-586287a493ca.png)
 
 # 機能 / Features
 
@@ -24,6 +24,13 @@ Steam版クッキークリッカーのアシストツールです。
     - If "ElderPledge" or "ElderCovenant" is valid on Halloween, "Revoke Elder Covenant" will be purchased automatically.
     - If feature "Auto purchase ElderPledge" is enabled on Halloween, it will be automatically disabled.
     - By using this function together with "Auto click GoldenCookie", "Auto buy Upgrades" and "Auto destroy Wrinklers", you can fully automate the acquisition of all upgrades of seasons.
+  - Auto buy buildings
+    - If "Auto train Dragon" feature turned on, this feature purchases up to 350 buildings until they are fully trained.
+  - Auto set spirits to slots in the pantheon
+    - Spirit Set will only be performed when the Pantheon slot is empty.
+    - Spirit sets are a regular procedure and will not be performed during the cool time.
+  - Auto train dragon and set auras
+    - Auras are set only when the dragon is fully grown.
   - Setting the interval for the above features
   - Check update this mod
 - JP
@@ -41,6 +48,13 @@ Steam版クッキークリッカーのアシストツールです。
     - ハロウィンの時にエルダー宣誓/エルダー誓約が有効であれば、自動的にエルダー誓約の撤回を行います
     - ハロウィンの時に「エルダー宣誓の自動購入」がONになっている場合、自動的に無効化されます
     - 「黄金クッキーの自動クリック」「アップグレードの自動購入」「シワシワ虫の自動撃退」と合わせて使うことでシーズンアップグレードの取得が完全自動で行えます
+  - 建物の自動購入
+    - ドラゴンの自動育成がONになっている場合、無駄を無くすために育成が完了するまで350以上までしか購入しなくなります
+  - パンテオンの自動セット
+    - 精霊のセットはパンテオンのスロットが空の時にのみ行われます
+    - 精霊のセットは正規の手順のものであり、クールタイム中であれば実行されません
+  - ドラゴンの自動育成 + オーラの自動セット
+    - オーラのセットはドラゴンの育成が最大まで完了したときにのみ行われます
   - これらの機能の実行間隔の設定
   - このMODのアプデチェック
 
@@ -57,13 +71,9 @@ Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/downlo
 # 今後入れる予定の機能 / Future plan
 
 - EN
-  - Auto buy buildings
-  - Auto set spirits to slots in the pantheon.
-  - Auto train dragon and set auras.
+  - Under consideration
 - JP
-  - 建物の自動購入
-  - パンテオンの自動セット
-  - ドラゴンの自動育成 + オーラの自動セット
+  - 検討中
 
 # 互換性 / Compatibility
 
