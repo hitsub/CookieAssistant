@@ -28,6 +28,7 @@ CookieAssistant.launch = function()
 				autoSpellonBuff: 0,
 				autoBuyElderPledge: 0,
 				autoBuyUpgrades: 0,
+				autoBuyBuildings: 0,
 				autoSwitchSeason: 0,
 				autoTrainDragon : 0,
 			},
@@ -41,6 +42,7 @@ CookieAssistant.launch = function()
 				autoSpellonBuff: 1000,
 				autoBuyElderPledge: 1000,
 				autoBuyUpgrades: 1000,
+				autoBuyBuildings: 1000,
 				autoSwitchSeason: 1000,
 				autoTrainDragon : 1000,
 			},
@@ -73,6 +75,7 @@ CookieAssistant.launch = function()
 			autoSpellonBuff: null,
 			autoBuyElderPledge: null,
 			autoBuyUpgrades: null,
+			autoBuyBuildings: null,
 			autoSwitchSeason: null,
 			autoTrainDragon : null,
 		}
@@ -296,6 +299,34 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoSwitchSeason
 				)
 			},
+			autoBuyBuildings: () =>
+			{
+				CookieAssistant.intervalHandles.autoBuyUpgrades = setInterval(
+					() =>
+					{
+						// console.log(l('products').innerHTML);
+						for (const objectName in Game.Objects)
+						{
+							var amount = Game.Objects[objectName].amount % 50 == 0 ? 50 : 50 - Game.Objects[objectName].amount % 50;
+							var isMaxDragon = Game.dragonLevel >= Game.dragonLevels.length - 1;
+							//ドラゴンの自動育成がONの場合は建物の自動購入を制限する
+							if (!isMaxDragon && CookieAssistant.config.flags.autoTrainDragon && Game.Objects[objectName].amount >= 300)
+							{
+								amount = 350 - Game.Objects[objectName].amount;
+								if (amount <= 0)
+								{
+									continue;
+								}
+							}
+							if (Game.cookies >= Game.Objects[objectName].getSumPrice(amount))
+							{
+								Game.Objects[objectName].buy(amount);
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoBuyUpgrades
+				);
+			},
 			autoTrainDragon : () =>
 			{
 				CookieAssistant.intervalHandles.autoTrainDragon = setInterval(
@@ -466,6 +497,11 @@ CookieAssistant.launch = function()
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy Upgrades ON', 'AutoBuy Upgrades OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
+				+ '</div>';
+		//建物自動購入
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyBuildings', 'CookieAssistant_autoBuyBuildings', 'AutoBuy Buildings ON', 'AutoBuy Buildings OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoBuyBuildings", 40, CookieAssistant.config.intervals.autoBuyBuildings, "CookieAssistant.ChangeInterval('autoBuyBuildings', this.value)")
 				+ '</div>';
 
 		//シーズン自動切換え
