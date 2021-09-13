@@ -8,7 +8,7 @@ if(typeof CCSE == 'undefined')
 }
 
 CookieAssistant.name = 'Cookie Assistant';
-CookieAssistant.version = '0.4.0';
+CookieAssistant.version = '0.4.1';
 CookieAssistant.GameVersion = '2.042';
 
 
@@ -639,7 +639,7 @@ CookieAssistant.launch = function()
 		str += m.Header('Advanced Assists');
 
 		//自動詠唱
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast "' + loc("Force the Hand of Fate") + '" ON', 'AutoSpellCast "' + loc("Force the Hand of Fate") + '" OFF', "CookieAssistant.Toggle")
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' ON', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals.autoSpellonBuff, "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)")
 				+ '<div class="listing">'
