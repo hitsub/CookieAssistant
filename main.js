@@ -513,8 +513,8 @@ CookieAssistant.launch = function()
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)")
 				+ '<div class="listing">'
-					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。詳細はSteamガイドを見てください。</label><br />'
-					+ '<label>Automatically switch to seasons in which the upgrade is still remained. See the Steam guide for more details.</label><br />'
+					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。</label><br />'
+					+ '<label>Automatically switch to seasons in which the upgrade is still remained. </label><br />'
 				+ '</div>'
 				+ '</div>';
 
@@ -539,6 +539,7 @@ CookieAssistant.launch = function()
 		str += '<div class="listing">'
 				+ m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default')
 				+ m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update')
+				+ m.ActionButton("Steam.openLink('https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882');", 'Get more information')
 			+ '</div>';
 
 		return str;
