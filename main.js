@@ -8,7 +8,7 @@ if(typeof CCSE == 'undefined')
 }
 
 CookieAssistant.name = 'Cookie Assistant';
-CookieAssistant.version = '0.4.1';
+CookieAssistant.version = '0.4.2';
 CookieAssistant.GameVersion = '2.042';
 
 
@@ -443,6 +443,10 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoSetSpirits = setInterval(
 					() =>
 					{
+						if(Game.Objects['Temple'].minigame == undefined || !Game.Objects['Temple'].minigameLoaded)
+						{
+							return;
+						}
 						var pantheon = Game.Objects['Temple'].minigame;
 						if (pantheon.slot[0] == -1)
 						{
@@ -682,21 +686,30 @@ CookieAssistant.launch = function()
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSetSpirits', 'CookieAssistant_autoSetSpirits', 'AutoSet Spirits ON', 'AutoSet Spirits OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoSetSpirits", 40, CookieAssistant.config.intervals.autoSetSpirits, "CookieAssistant.ChangeInterval('autoSetSpirits', this.value)")
-				+ '<div class="listing">'
-					+ '<label>Diamond : </label>'
-					+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot1++; if(CookieAssistant.config.particular.spirits.slot1 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot1 = 0;} Game.UpdateMenu();">`
-						+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot1].name
-					+ '</a>'
-					+ '<label>Ruby : </label>'
-					+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot2++; if(CookieAssistant.config.particular.spirits.slot2 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot2 = 0;} Game.UpdateMenu();">`
-						+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot2].name
-					+ '</a>'
-					+ '<label>Jade : </label>'
-					+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot3++; if(CookieAssistant.config.particular.spirits.slot3 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot3 = 0;} Game.UpdateMenu();">`
-						+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot3].name
-					+ '</a>'
-					+ '</div>'
-				+ '</div>';
+				+ '<div class="listing">';
+
+				if (Game.Objects['Temple'].minigame != undefined && Game.Objects['Temple'].minigameLoaded)
+				{
+					str +=	'<label>Diamond : </label>'
+							+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot1++; if(CookieAssistant.config.particular.spirits.slot1 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot1 = 0;} Game.UpdateMenu();">`
+								+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot1].name
+							+ '</a>'
+							+ '<label>Ruby : </label>'
+							+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot2++; if(CookieAssistant.config.particular.spirits.slot2 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot2 = 0;} Game.UpdateMenu();">`
+								+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot2].name
+							+ '</a>'
+							+ '<label>Jade : </label>'
+							+ `<a class="option" ` + Game.clickStr + `=" CookieAssistant.config.particular.spirits.slot3++; if(CookieAssistant.config.particular.spirits.slot3 >= Object.keys(Game.Objects['Temple'].minigame.gods).length){CookieAssistant.config.particular.spirits.slot3 = 0;} Game.UpdateMenu();">`
+								+ Game.Objects['Temple'].minigame.godsById[CookieAssistant.config.particular.spirits.slot3].name
+							+ '</a>';
+				}
+				else
+				{
+					str += "<label>パンテオンがロックされています。アンロックするまでこの機能は使えません。</label>";
+					str += "<label>You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br>";
+				}
+		str +=  '</div>'
+					+ '</div>';
 
 		str += "<br>"
 		str += m.Header('Misc');
