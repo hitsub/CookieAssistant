@@ -71,9 +71,13 @@ Download [HERE](https://github.com/hitsub/CookieAssistant/releases/latest/downlo
 # 今後入れる予定の機能 / Future plan
 
 - EN
-  - Under consideration
+  - Auto harvest sugar-lump [#15](https://github.com/hitsub/CookieAssistant/issues/15)
+  - Semi-Automating the Garden [#16](https://github.com/hitsub/CookieAssistant/issues/16)
+  - Auto reincarnation [#17](https://github.com/hitsub/CookieAssistant/issues/17)
 - JP
-  - 検討中
+  - 砂糖玉の自動収穫 [#15](https://github.com/hitsub/CookieAssistant/issues/15)
+  - ガーデンの半自動化 [#16](https://github.com/hitsub/CookieAssistant/issues/16)
+  - 転生の自動化 [#17](https://github.com/hitsub/CookieAssistant/issues/17)
 
 # 互換性 / Compatibility
 
