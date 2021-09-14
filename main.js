@@ -172,7 +172,7 @@ CookieAssistant.launch = function()
 					{
 						for (var i in Game.shimmers)
 						{
-							if(Game.shimmers[i].type == "golden")
+							if(Game.shimmers[i].type == "golden" && Game.shimmers[i].shimmer.wrath == 0)
 							{
 								Game.shimmers[i].pop();
 							}
