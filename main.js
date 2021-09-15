@@ -159,8 +159,14 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						bigCookie.click();
 						Game.lastClick = 0;
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("BigCookie:"+ (e-s));
+						}
 					},
 					CookieAssistant.config.intervals.autoClickBigCookie
 				)
@@ -170,12 +176,18 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickGoldenCookie = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						for (var i in Game.shimmers)
 						{
 							if(Game.shimmers[i].type == "golden" && Game.shimmers[i].wrath == 0)
 							{
 								Game.shimmers[i].pop();
 							}
+						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("GoldenCookie:"+(e-s));
 						}
 					},
 					CookieAssistant.config.intervals.autoClickGoldenCookie
@@ -186,12 +198,18 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickReindeer = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						for (var i in Game.shimmers)
 						{
 							if(Game.shimmers[i].type == "reindeer")
 							{
 								Game.shimmers[i].pop();
 							}
+						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Reindeer:"+(e-s));
 						}
 					},
 					CookieAssistant.config.intervals.autoClickReindeer
@@ -202,9 +220,15 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickFortuneNews = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						if (Game.TickerEffect && Game.TickerEffect.type == 'fortune')
 						{
 							Game.tickerL.click();
+						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("News:"+(e-s));
 						}
 					},
 					CookieAssistant.config.intervals.autoClickFortuneNews
@@ -215,6 +239,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoSpellonBuff = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						var isFrenzy = false;
 						for (var i in Game.buffs)
 						{
@@ -240,6 +265,11 @@ CookieAssistant.launch = function()
 						{
 							grimoire.castSpell(spell);
 						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Spellcast:"+(e-s));
+						}
 					},
 					CookieAssistant.config.intervals.autoSpellonBuff
 				)
@@ -249,7 +279,13 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickWrinklers = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						Game.wrinklers.forEach(function(me){ if (me.close==1) me.hp = 0});
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Wrinkler:"+(e-s));
+						}
 					},
 					CookieAssistant.config.intervals.autoClickWrinklers
 				)
@@ -259,6 +295,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoBuyElderPledge = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						if (Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Pledge"]) != -1)
 						{
 							Game.Upgrades["Elder Pledge"].buy();
@@ -267,6 +304,11 @@ CookieAssistant.launch = function()
 						if (Game.UpgradesInStore.indexOf(Game.Upgrades["Sacrificial rolling pins"]) != -1)
 						{
 							Game.Upgrades["Sacrificial rolling pins"].buy(1);
+						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Elderpledge:"+(e-s));
 						}
 					},
 					CookieAssistant.config.intervals.autoBuyElderPledge
@@ -277,6 +319,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoBuyUpgrades = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						for (var i in Game.UpgradesInStore)
 						{
 							var upgrade = Game.UpgradesInStore[i];
@@ -297,6 +340,11 @@ CookieAssistant.launch = function()
 								upgrade.buy(1);
 							}
 						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Upgrades:"+(e-s));
+						}
 					},
 					CookieAssistant.config.intervals.autoBuyUpgrades
 				);
@@ -306,6 +354,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoSwitchSeason = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						var winterSantaRate = Game.GetHowManySantaDrops() / Game.santaDrops.length;
 						var winterReindeerRate = Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length;
 						var halloweenRate = Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length;
@@ -387,6 +436,11 @@ CookieAssistant.launch = function()
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Reindeer:"+(e-s));
+						}
 					},
 					CookieAssistant.config.intervals.autoSwitchSeason
 				)
@@ -396,6 +450,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoBuyBuildings = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						var amountPerPurchase = CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].amount;
 						// console.log(l('products').innerHTML);
 						for (const objectName in Game.Objects)
@@ -416,6 +471,11 @@ CookieAssistant.launch = function()
 								Game.Objects[objectName].buy(amount);
 							}
 						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Reindeer:"+(e-s));
+						}
 					},
 					CookieAssistant.config.intervals.autoBuyBuildings
 				);
@@ -425,6 +485,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoTrainDragon = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						if (Game.dragonLevel < Game.dragonLevels.length - 1 && Game.dragonLevels[Game.dragonLevel].cost())
 						{
 							Game.UpgradeDragon();
@@ -433,6 +494,11 @@ CookieAssistant.launch = function()
 								Game.dragonAura = CookieAssistant.config.particular.dragon.aura1;
 								Game.dragonAura2 = CookieAssistant.config.particular.dragon.aura2;
 							}
+						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Reindeer:"+(e-s));
 						}
 					},
 					CookieAssistant.config.intervals.autoTrainDragon
@@ -443,6 +509,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoSetSpirits = setInterval(
 					() =>
 					{
+						var s = performance.now();
 						if(Game.Objects['Temple'].minigame == undefined || !Game.Objects['Temple'].minigameLoaded)
 						{
 							return;
@@ -468,6 +535,11 @@ CookieAssistant.launch = function()
 							pantheon.hoverSlot(2);
 							pantheon.dropGod();
 							pantheon.hoverSlot(-1);
+						}
+						var e = performance.now();
+						if (e-s > 100)
+						{
+							console.log("Reindeer:"+(e-s));
 						}
 					},
 					CookieAssistant.config.intervals.autoSetSpirits
