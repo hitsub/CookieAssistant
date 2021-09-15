@@ -413,6 +413,11 @@ CookieAssistant.launch = function()
 							}
 							if (Game.cookies >= Game.Objects[objectName].getSumPrice(amount))
 							{
+								//売却モードだったら強制的に購入モードにする
+								if (Game.buyMode < 0)
+								{
+									Game.buyMode = 1;
+								}
 								Game.Objects[objectName].buy(amount);
 							}
 						}
