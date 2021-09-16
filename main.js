@@ -285,6 +285,11 @@ CookieAssistant.launch = function()
 						for (var i in Game.UpgradesInStore)
 						{
 							var upgrade = Game.UpgradesInStore[i];
+							//保管庫に入っているアップグレードは無視する
+							if (upgrade.isVaulted())
+							{
+								continue;
+							}
 							//スイッチ類を除いて購入(ElderPledgeもToggle扱いなので考えなくてよい)
 							//生贄用めん棒はこっちでも勝手に買われる
 							if (upgrade.pool != "toggle")
