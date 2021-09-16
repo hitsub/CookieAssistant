@@ -159,6 +159,11 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
 					() =>
 					{
+						//転生中は動作を止める
+						if (Game.OnAscend)
+						{
+							return;
+						}
 						bigCookie.click();
 						Game.lastClick = 0;
 					},
