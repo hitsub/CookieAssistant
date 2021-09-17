@@ -226,9 +226,21 @@ CookieAssistant.launch = function()
 						var isFrenzy = false;
 						for (var i in Game.buffs)
 						{
-							if (Game.buffs[i].name == "Frenzy")
+							switch(Game.buffs[i].type.name)
 							{
-								isFrenzy = true;
+								case "frenzy":
+								case "blood frenzy": //elder frenzy (x666)
+								case "dragon harvest":
+								case "click frenzy":
+								case "dragonflight":
+								case "sugar frenzy":
+								case "building buff":
+									isFrenzy = true;
+									break;
+								case "cursed finger": //ポジティブなバフだが、バフ同士によって相性が悪いため無視する
+								case "devastation": //DevastationはMOD側で起こしたいのでユーザーが自発的に起こしたものについては無視する
+								default:
+									break;
 							}
 						}
 						var grimoire = Game.ObjectsById[7].minigame;
