@@ -52,7 +52,7 @@ CookieAssistant.launch = function()
 				autoSetSpirits : 10000,
 				autoHarvestSugarlump : 60000,
 			},
-			//各機能の特殊設定
+			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
 			particular:
 			{
 				dragon:
@@ -62,7 +62,8 @@ CookieAssistant.launch = function()
 				},
 				spell:
 				{
-					mode: 0,
+					mode: 0, //mp condition
+					mode2: 0, //buff count condition
 				},
 				upgrades:
 				{
@@ -113,11 +114,24 @@ CookieAssistant.launch = function()
 			{
 				0:
 				{
-					desc: "When the minimum required MP has been accumulated / 最低限必要なMPが溜まったら詠唱",
+					desc: "MP is minimum to cast / 最低限のMP",
 				},
 				1:
 				{
-					desc: "When MP is fully restored / MPが完全回復したら詠唱",
+					desc: "MP is full / MPがフル",
+				}
+			},
+			spell_buff:
+			{
+				0:
+				{
+					count: 1,
+					desc: "Have one buff / バフが1つ",
+				},
+				1:
+				{
+					count: 2,
+					desc: "Have two or more buffs / バフが2つ以上",
 				}
 			},
 			upgrades:
@@ -223,7 +237,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoSpellonBuff = setInterval(
 					() =>
 					{
-						var isFrenzy = false;
+						var buffCount = 0;
 						for (var i in Game.buffs)
 						{
 							switch(Game.buffs[i].type.name)
@@ -235,7 +249,7 @@ CookieAssistant.launch = function()
 								case "dragonflight":
 								case "sugar frenzy":
 								case "building buff":
-									isFrenzy = true;
+									buffCount++;
 									break;
 								case "cursed finger": //ポジティブなバフだが、バフ同士によって相性が悪いため無視する
 								case "devastation": //DevastationはMOD側で起こしたいのでユーザーが自発的に起こしたものについては無視する
@@ -256,7 +270,7 @@ CookieAssistant.launch = function()
 								cost = grimoire.magicM;
 								break;
 						}
-						if (cost <= Math.floor(grimoire.magic) && isFrenzy)
+						if (cost <= Math.floor(grimoire.magic) && buffCount >= CookieAssistant.modes.spell_buff[CookieAssistant.config.particular.spell.mode2].count)
 						{
 							grimoire.castSpell(spell);
 						}
@@ -608,6 +622,13 @@ CookieAssistant.launch = function()
 			{
 				CookieAssistant.config.particular[key] = value;
 			}
+			for (const [key_p, value_p] of Object.entries(defaultConfig.particular[key]))
+			{
+				if (CookieAssistant.config.particular[key][key_p] == undefined)
+				{
+					CookieAssistant.config.particular[key][key_p] = value_p;
+				}
+			}
 		}
 	}
 
@@ -704,9 +725,11 @@ CookieAssistant.launch = function()
 					+ '<label>MODE : </label>'
 					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.spell.mode++; if(CookieAssistant.config.particular.spell.mode >= Object.keys(CookieAssistant.modes.spell).length){CookieAssistant.config.particular.spell.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.spell[CookieAssistant.config.particular.spell.mode].desc
-					+ '</a><br />'
-					+ '<label>フィーバー効果(CPS7倍)中に呪文「運命を押し付ける」を自動で発動する</label><br />'
-					+ '<label>Automatically activate the spell "Hand of Fate" during the frenzy effect (7x CPS).</label><br />'
+					+ '</a>'
+					+ '<label> AND </label>'
+					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.spell.mode2++; if(CookieAssistant.config.particular.spell.mode2 >= Object.keys(CookieAssistant.modes.spell_buff).length){CookieAssistant.config.particular.spell.mode2 = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.spell_buff[CookieAssistant.config.particular.spell.mode2].desc
+					+ '</a>'
 				+ '</div>'
 				+ '</div>';
 		
