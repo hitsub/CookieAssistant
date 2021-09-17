@@ -33,6 +33,7 @@ CookieAssistant.launch = function()
 				autoSwitchSeason: 0,
 				autoTrainDragon : 0,
 				autoSetSpirits : 0,
+				autoHarvestSugarlump : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -49,6 +50,7 @@ CookieAssistant.launch = function()
 				autoSwitchSeason: 1000,
 				autoTrainDragon : 1000,
 				autoSetSpirits : 10000,
+				autoHarvestSugarlump : 60000,
 			},
 			//各機能の特殊設定
 			particular:
@@ -102,6 +104,7 @@ CookieAssistant.launch = function()
 			autoSwitchSeason: null,
 			autoTrainDragon : null,
 			autoSetSpirits : null,
+			autoHarvestSugarlump : null,
 		}
 
 		CookieAssistant.modes =
@@ -488,6 +491,25 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoSetSpirits
 				);
 			},
+			autoHarvestSugarlump : () =>
+			{
+				CookieAssistant.intervalHandles.autoHarvestSugarlump = setInterval(
+					() =>
+					{
+						//砂糖玉がアンロックされているかチェック
+						if (!Game.canLumps())
+						{
+							return;
+						}
+						var age = Date.now() - Game.lumpT;
+						if (age > Game.lumpRipeAge && age < Game.lumpOverripeAge)
+						{
+							Game.clickLump();
+						}
+					},
+					CookieAssistant.config.intervals.autoHarvestSugarlump
+				);
+			}
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -652,6 +674,11 @@ CookieAssistant.launch = function()
 							+ CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].desc
 					+ '</a><br />'
 				+ '</div>'
+				+ '</div>';
+		//砂糖玉自動収穫
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHarvestSugarlump', 'CookieAssistant_autoHarvestSugarlump', 'AutoHarvest ' + loc("sugar lump") + ' ON', 'AutoHarvest ' + loc("sugar lump") + ' OFF', "CookieAssistant.Toggle")
+				+ '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoHarvestSugarlump", 40, CookieAssistant.config.intervals.autoHarvestSugarlump, "CookieAssistant.ChangeInterval('autoHarvestSugarlump', this.value)")
 				+ '</div>';
 		
 		str += "<br>"
