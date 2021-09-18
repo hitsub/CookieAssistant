@@ -5,7 +5,7 @@ Does not support direct rewriting of values or giving items.
 Steam版クッキークリッカーのアシストツールです。  
 値の直接書き換えやアイテムの付与といったことには対応しません。
 
-![SS_No-00043](https://user-images.githubusercontent.com/5540614/133083723-ad57c613-7fe9-442b-90d4-586287a493ca.png)
+![SS_No-00049](https://user-images.githubusercontent.com/5540614/133881377-50dea58e-7a94-40fd-9e67-580eb7123ede.png)
 
 # 機能 / Features
 
@@ -14,7 +14,7 @@ Steam版クッキークリッカーのアシストツールです。
   - Auto click Golden Cookie
   - Auto click Reindeer
   - Auto click Fortune News
-  - Auto spellcasting 'Hand of Fate' during frenzy effect
+  - Auto spellcasting 'Hand of Fate' during any buff
   - Auto destroy Wrinklers
   - Auto purchase Elder Pledge
     - The "Sacrificial rolling pins" will also be purchased automatically.
@@ -26,6 +26,7 @@ Steam版クッキークリッカーのアシストツールです。
     - By using this function together with "Auto click GoldenCookie", "Auto buy Upgrades" and "Auto destroy Wrinklers", you can fully automate the acquisition of all upgrades of seasons.
   - Auto buy buildings
     - If "Auto train Dragon" feature turned on, this feature purchases up to 350 buildings until they are fully trained.
+  - Auto harvest Sugar Lumps
   - Auto set spirits to slots in the pantheon
     - Spirit Set will only be performed when the Pantheon slot is empty.
     - Spirit sets are a regular procedure and will not be performed during the cool time.
@@ -38,7 +39,7 @@ Steam版クッキークリッカーのアシストツールです。
   - 黄金クッキーの自動クリック
   - トナカイの自動クリック
   - フォーチューンニュースの自動クリック
-  - フィーバー中に自動で「運命を押し付ける」を詠唱
+  - 何らかのバフが発動しているときに自動で「運命を押し付ける」を詠唱
   - シワシワ虫の自動撃退
   - エルダー宣誓の自動購入
     - 「生贄用めん棒」も自動購入するようになります
@@ -50,6 +51,7 @@ Steam版クッキークリッカーのアシストツールです。
     - 「黄金クッキーの自動クリック」「アップグレードの自動購入」「シワシワ虫の自動撃退」と合わせて使うことでシーズンアップグレードの取得が完全自動で行えます
   - 建物の自動購入
     - ドラゴンの自動育成がONになっている場合、無駄を無くすために育成が完了するまで350以上までしか購入しなくなります
+  - 砂糖玉の自動収穫
   - パンテオンの自動セット
     - 精霊のセットはパンテオンのスロットが空の時にのみ行われます
     - 精霊のセットは正規の手順のものであり、クールタイム中であれば実行されません
