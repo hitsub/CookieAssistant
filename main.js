@@ -79,6 +79,10 @@ CookieAssistant.launch = function()
 					slot2: 1,
 					slot3: 2,
 				},
+				golden:
+				{
+					mode: 0,
+				},
 			}
 		};
 
@@ -169,6 +173,17 @@ CookieAssistant.launch = function()
 					desc: "Buy every 100 pieces / 100個単位で購入する",
 				},
 			},
+			golden:
+			{
+				0:
+				{
+					desc: "Golden Cookie including Wrath Cookie / 怒りのクッキーもクリックする"
+				},
+				1:
+				{
+					desc: "Ignore Wrath Cookie / 怒りのクッキーは無視する"
+				}
+			},
 		}
 
 		CookieAssistant.actions =
@@ -196,8 +211,12 @@ CookieAssistant.launch = function()
 					{
 						for (var i in Game.shimmers)
 						{
-							if(Game.shimmers[i].type == "golden" && Game.shimmers[i].wrath == 0)
+							if(Game.shimmers[i].type == "golden")
 							{
+								if (CookieAssistant.config.particular.golden.mode == 1 && Game.shimmers[i].wrath != 0)
+								{
+									continue;
+								}
 								Game.shimmers[i].pop();
 							}
 						}
@@ -663,6 +682,12 @@ CookieAssistant.launch = function()
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickGoldenCookie, "CookieAssistant.ChangeInterval('autoClickGoldenCookie', this.value)")
+				+ '<div class="listing">'
+					+ '<label>MODE : </label>'
+					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.golden.mode++; if(CookieAssistant.config.particular.golden.mode >= Object.keys(CookieAssistant.modes.golden).length){CookieAssistant.config.particular.golden.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.golden[CookieAssistant.config.particular.golden.mode].desc
+					+ '</a><br />'
+				+ '</div>'
 				+ '</div>';
 		//虫撃破
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
