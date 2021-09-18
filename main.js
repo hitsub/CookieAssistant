@@ -91,6 +91,8 @@ CookieAssistant.launch = function()
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
 
+		CookieAssistant.showAllIntervals = false;
+
 		CookieAssistant.intervalHandles = 
 		{
 			autoClickBigCookie: null,
@@ -652,45 +654,57 @@ CookieAssistant.launch = function()
 		let m = CCSE.MenuHelper;
 		str = m.Header('Basic Assists');
 		//大クッキークリック
-		str +=  '<div class="listing">'
+		str +=	'<div class="listing">'
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
 				+ '</div>';
 		//黄金クッキークリック
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickGoldenCookie, "CookieAssistant.ChangeInterval('autoClickGoldenCookie', this.value)")
 				+ '</div>';
-		//トナカクリック
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick ' + loc("Reindeer") + ' ON', 'AutoClick ' + loc("Reindeer") + ' OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals.autoClickReindeer, "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)")
-				+ '</div>';
-		//FortuneNewsクリック
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals.autoClickFortuneNews, "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)")
-				+ '</div>';
 		//虫撃破
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
 				+ '</div>';
+		//トナカイクリック
+		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick ' + loc("Reindeer") + ' ON', 'AutoClick ' + loc("Reindeer") + ' OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals.autoClickReindeer, "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)");
+				}
+		str +=	'</div>';
+		//FortuneNewsクリック
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals.autoClickFortuneNews, "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)");
+				}
+		str +=	'</div>';
 		//ElderPedge自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' ON', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals.autoBuyElderPledge, "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)")
-				+ '<div class="listing">'
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' ON', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals.autoBuyElderPledge, "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)");
+				}
+		str +=	'<div class="listing">'
 					+ '<label>※この機能はアップグレードの生贄用めん棒も自動で購入するようになります。</label><br />'
 					+ '<label>This feature will also automatically purchase "Sacrificial rolling pins".</label><br />'
 				+ '</div>'
 				+ '</div>';
 		//アップグレード自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy ' + loc("upgrade") + ' ON', 'AutoBuy ' + loc("upgrade") + ' OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)")
-				+ '<div class="listing">'
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy ' + loc("upgrade") + ' ON', 'AutoBuy ' + loc("upgrade") + ' OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoBuyUpgrades", 40, CookieAssistant.config.intervals.autoBuyUpgrades, "CookieAssistant.ChangeInterval('autoBuyUpgrades', this.value)");
+				}
+		str +=	'<div class="listing">'
 					+ '<label>MODE : </label>'
 					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.upgrades.mode++; if(CookieAssistant.config.particular.upgrades.mode >= Object.keys(CookieAssistant.modes.upgrades).length){CookieAssistant.config.particular.upgrades.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.upgrades[CookieAssistant.config.particular.upgrades.mode].desc
@@ -698,10 +712,13 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 		//建物自動購入
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyBuildings', 'CookieAssistant_autoBuyBuildings', 'AutoBuy ' + loc("building") + ' ON', 'AutoBuy ' + loc("building") + ' OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoBuyBuildings", 40, CookieAssistant.config.intervals.autoBuyBuildings, "CookieAssistant.ChangeInterval('autoBuyBuildings', this.value)")
-				+ '<div class="listing">'
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyBuildings', 'CookieAssistant_autoBuyBuildings', 'AutoBuy ' + loc("building") + ' ON', 'AutoBuy ' + loc("building") + ' OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoBuyBuildings", 40, CookieAssistant.config.intervals.autoBuyBuildings, "CookieAssistant.ChangeInterval('autoBuyBuildings', this.value)");
+				}
+		str +=	'<div class="listing">'
 					+ '<label>MODE : </label>'
 					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.buildings.mode++; if(CookieAssistant.config.particular.buildings.mode >= Object.keys(CookieAssistant.modes.buildings).length){CookieAssistant.config.particular.buildings.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].desc
@@ -709,19 +726,25 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 		//砂糖玉自動収穫
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHarvestSugarlump', 'CookieAssistant_autoHarvestSugarlump', 'AutoHarvest ' + loc("sugar lump") + ' ON', 'AutoHarvest ' + loc("sugar lump") + ' OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoHarvestSugarlump", 40, CookieAssistant.config.intervals.autoHarvestSugarlump, "CookieAssistant.ChangeInterval('autoHarvestSugarlump', this.value)")
-				+ '</div>';
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHarvestSugarlump', 'CookieAssistant_autoHarvestSugarlump', 'AutoHarvest ' + loc("sugar lump") + ' ON', 'AutoHarvest ' + loc("sugar lump") + ' OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoHarvestSugarlump", 40, CookieAssistant.config.intervals.autoHarvestSugarlump, "CookieAssistant.ChangeInterval('autoHarvestSugarlump', this.value)");
+				}
+		str +=	'</div>';
 		
 		str += "<br>"
 		str += m.Header('Advanced Assists');
 
 		//自動詠唱
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' ON', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals.autoSpellonBuff, "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)")
-				+ '<div class="listing">'
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' ON', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoSpellonBuff", 40, CookieAssistant.config.intervals.autoSpellonBuff, "CookieAssistant.ChangeInterval('autoSpellonBuff', this.value)");
+				}
+		str +=	'<div class="listing">'
 					+ '<label>MODE : </label>'
 					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.spell.mode++; if(CookieAssistant.config.particular.spell.mode >= Object.keys(CookieAssistant.modes.spell).length){CookieAssistant.config.particular.spell.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.spell[CookieAssistant.config.particular.spell.mode].desc
@@ -734,20 +757,26 @@ CookieAssistant.launch = function()
 				+ '</div>';
 		
 		//シーズン自動切換え
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSwitchSeason', 'CookieAssistant_autoSwitchSeason', 'AutoSwitch Seasons ON', 'AutoSwitch Seasons OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)")
-				+ '<div class="listing">'
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSwitchSeason', 'CookieAssistant_autoSwitchSeason', 'AutoSwitch Seasons ON', 'AutoSwitch Seasons OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str +='<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)");
+				}
+		str +=	'<div class="listing">'
 					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。</label><br />'
 					+ '<label>Automatically switch to seasons in which the upgrade is still remained. </label><br />'
 				+ '</div>'
 				+ '</div>';
 
 		//ドラゴン自動育成
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoTrainDragon', 'CookieAssistant_autoTrainDragon', 'AutoTrain Dragon ON', 'AutoTrain Dragon OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoTrainDragon", 40, CookieAssistant.config.intervals.autoTrainDragon, "CookieAssistant.ChangeInterval('autoTrainDragon', this.value)")
-				+ '<div class="listing">'
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoTrainDragon', 'CookieAssistant_autoTrainDragon', 'AutoTrain Dragon ON', 'AutoTrain Dragon OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoTrainDragon", 40, CookieAssistant.config.intervals.autoTrainDragon, "CookieAssistant.ChangeInterval('autoTrainDragon', this.value)");
+				}
+		str +=	'<div class="listing">'
 					+ '<label>Aura1 : </label>'
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.dragon.aura1++; if(CookieAssistant.config.particular.dragon.aura1 >= Object.keys(Game.dragonAuras).length){CookieAssistant.config.particular.dragon.aura1 = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ Game.dragonAuras[CookieAssistant.config.particular.dragon.aura1].dname
@@ -760,10 +789,13 @@ CookieAssistant.launch = function()
 				+ '</div>';
 
 		//パンテオンのスロット自動セット
-		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSetSpirits', 'CookieAssistant_autoSetSpirits', 'AutoSet Spirits ON', 'AutoSet Spirits OFF', "CookieAssistant.Toggle")
-				+ '<label>Interval(ms) : </label>'
-				+ m.InputBox("CookieAssistant_Interval_autoSetSpirits", 40, CookieAssistant.config.intervals.autoSetSpirits, "CookieAssistant.ChangeInterval('autoSetSpirits', this.value)")
-				+ '<div class="listing">';
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSetSpirits', 'CookieAssistant_autoSetSpirits', 'AutoSet Spirits ON', 'AutoSet Spirits OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoSetSpirits", 40, CookieAssistant.config.intervals.autoSetSpirits, "CookieAssistant.ChangeInterval('autoSetSpirits', this.value)");
+				}
+		str +=	'<div class="listing">';
 
 				if (Game.Objects['Temple'].minigame != undefined && Game.Objects['Temple'].minigameLoaded)
 				{
@@ -782,18 +814,19 @@ CookieAssistant.launch = function()
 				}
 				else
 				{
-					str += "<label>パンテオンがロックされています。アンロックするまでこの機能は使えません。</label>";
-					str += "<label>You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br>";
+					str += "<label>パンテオンがロックされています。アンロックするまでこの機能は使えません。</label><br />";
+					str += "<label>You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
 				}
-		str +=  '</div>'
-					+ '</div>';
+		str +=	'</div></div>'
 
-		str += "<br>"
+		str += "<br />"
 		str += m.Header('Misc');
 		str += '<div class="listing">'
+				+ m.ActionButton("CookieAssistant.showAllIntervals = !CookieAssistant.showAllIntervals; Game.UpdateMenu();", (CookieAssistant.showAllIntervals ? 'Hide' : 'Show All') + ' Interval Settings')
 				+ m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default')
 				+ m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update')
 				+ m.ActionButton("Steam.openLink('https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882');", 'Get more information')
+				+ '<label>Version : ' + CookieAssistant.version + '</label>'
 			+ '</div>';
 
 		return str;
