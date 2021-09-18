@@ -826,6 +826,7 @@ CookieAssistant.launch = function()
 				+ m.ActionButton("CookieAssistant.restoreDefaultConfig(2); CookieAssistant.DoAction(); Game.UpdateMenu();", 'Restore Default')
 				+ m.ActionButton("CookieAssistant.CheckUpdate();", 'Check Update')
 				+ m.ActionButton("Steam.openLink('https://steamcommunity.com/sharedfiles/filedetails/?id=2596469882');", 'Get more information')
+				+ '<label>Version : ' + CookieAssistant.version + '</label>'
 			+ '</div>';
 
 		return str;
