@@ -83,6 +83,10 @@ CookieAssistant.launch = function()
 				{
 					mode: 0,
 				},
+				bigCookie:
+				{
+					isMute: 1,
+				},
 			}
 		};
 
@@ -94,6 +98,12 @@ CookieAssistant.launch = function()
 		CookieAssistant.isLoaded = 1;
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
+
+        CCSE.SpliceCodeIntoFunction(
+			"Game.playCookieClickSound",
+			2,
+			"if (CookieAssistant.config.particular.bigCookie.isMute) { return; }"
+		);
 
 		CookieAssistant.showAllIntervals = false;
 
@@ -677,6 +687,9 @@ CookieAssistant.launch = function()
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
+					+ '<label></label><a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.bigCookie.isMute++; if(CookieAssistant.config.particular.bigCookie.isMute >= 2){CookieAssistant.config.particular.bigCookie.isMute = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ (CookieAssistant.config.particular.bigCookie.isMute ? 'Mute Click SE' : 'Play Click SE')
+					+ '</a><br />'
 				+ '</div>';
 		//黄金クッキークリック
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
