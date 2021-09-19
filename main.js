@@ -203,6 +203,11 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
 					() =>
 					{
+						//BGMがおかしくなるので最初の1秒は実行しない
+						if (Game.T < Game.fps)
+						{
+							return;
+						}
 						//転生中は動作を止める
 						if (Game.OnAscend)
 						{
