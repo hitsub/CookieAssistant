@@ -34,6 +34,7 @@ CookieAssistant.launch = function()
 				autoTrainDragon : 0,
 				autoSetSpirits : 0,
 				autoHarvestSugarlump : 0,
+				autoSellBuilding : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -51,6 +52,7 @@ CookieAssistant.launch = function()
 				autoTrainDragon : 1000,
 				autoSetSpirits : 10000,
 				autoHarvestSugarlump : 60000,
+				autoSellBuilding : 500,
 			},
 			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
 			particular:
@@ -87,6 +89,14 @@ CookieAssistant.launch = function()
 				{
 					isMute: 1,
 				},
+				sell:
+				{
+					isAfterSell: 0, //売却後かどうかのフラグ保持(作動中にゲームを落としても動作するように)
+					target: 0,
+					amount: 0,
+					activate_mode: 0,
+					after_mode: 0,
+				},
 			}
 		};
 
@@ -106,6 +116,7 @@ CookieAssistant.launch = function()
 		);
 
 		CookieAssistant.showAllIntervals = false;
+		CookieAssistant.isAfterSpellcast = false;
 
 		CookieAssistant.intervalHandles = 
 		{
@@ -122,6 +133,7 @@ CookieAssistant.launch = function()
 			autoTrainDragon : null,
 			autoSetSpirits : null,
 			autoHarvestSugarlump : null,
+			autoSellBuilding : null,
 		}
 
 		CookieAssistant.modes =
@@ -193,6 +205,44 @@ CookieAssistant.launch = function()
 				{
 					desc: "Ignore Wrath Cookie / 怒りのクッキーは無視する"
 				}
+			},
+			sell_buildings: //建物自動売却の発動条件
+			{
+				0:
+				{
+					desc: "Have one buff / バフが1つ",
+				},
+				1:
+				{
+					desc: "Have two or more buffs / バフが2つ以上",
+				},
+				2:
+				{
+					desc: "Have click buff / クリック系のバフ",
+				},
+				3:
+				{
+					desc: "Have two or more buffs including click buff / クリック系を含めて2つ以上のバフ",
+				},
+				4:
+				{
+					desc: "After auto-spellcast / 自動詠唱の後",
+				},
+			},
+			sell_buildings_after: //建物自動売却を行った後の動作
+			{
+				0:
+				{
+					desc: "Buy back the amount sold / 売った分だけ買い戻す",
+				},
+				1:
+				{
+					desc: "Spellcast if can, and buy back / 詠唱してから買い戻す",
+				},
+				2:
+				{
+					desc: "Do nothing / 何もしない",
+				},
 			},
 		}
 
@@ -309,6 +359,14 @@ CookieAssistant.launch = function()
 						if (cost <= Math.floor(grimoire.magic) && buffCount >= CookieAssistant.modes.spell_buff[CookieAssistant.config.particular.spell.mode2].count)
 						{
 							grimoire.castSpell(spell);
+							CookieAssistant.isAfterSpellcast = true;
+							setTimeout(() =>
+							{
+								if (CookieAssistant.isAfterSpellcast)
+								{
+									CookieAssistant.isAfterSpellcast = false;
+								}
+							}, 3000);
 						}
 					},
 					CookieAssistant.config.intervals.autoSpellonBuff
@@ -571,7 +629,107 @@ CookieAssistant.launch = function()
 					},
 					CookieAssistant.config.intervals.autoHarvestSugarlump
 				);
-			}
+			},
+			autoSellBuilding : () =>
+			{
+				CookieAssistant.intervalHandles.autoSellBuilding = setInterval(
+					() =>
+					{
+						var objectName = Game.ObjectsById[CookieAssistant.config.particular.sell.target].name;
+						var amount = parseInt(CookieAssistant.config.particular.sell.amount);
+						if (CookieAssistant.config.particular.sell.isAfterSell)
+						{
+							if (CookieAssistant.config.particular.sell.after_mode == 2)//Do nothing
+							{
+								CookieAssistant.config.particular.sell.isAfterSell = 0;
+								return;
+							}
+							if (CookieAssistant.config.particular.sell.after_mode == 1)//Spellcast and buy back
+							{
+								var grimoire = Game.ObjectsById[7].minigame;
+								if (grimoire == undefined)
+								{
+									Game.Notify(CookieAssistant.name, "You have not unlocked the Grimoire yet, so failed to spellcast.<br />グリモア解放前のため、呪文の発動に失敗しました。", "", 3);
+									CookieAssistant.config.particular.sell.isAfterSell = 0;
+									return;
+								}
+								var spell = grimoire.spells['hand of fate'];
+								var cost = Math.floor(spell.costMin + grimoire.magicM * spell.costPercent);
+								if (cost <= Math.floor(grimoire.magic))
+								{
+									grimoire.castSpell(spell);
+								}
+							}
+							if (Game.cookies >= Game.Objects[objectName].getSumPrice(amount))
+							{
+								if (Game.buyMode < 0)
+								{
+									Game.buyMode = 1;
+								}
+								Game.Objects[objectName].buy(amount);
+							}
+							else
+							{
+								console.log("Game.cookies :" + Game.cookies + ", Requirement : " + Game.Objects[objectName].getSumPrice(amount));
+								Game.Notify(CookieAssistant.name, "クッキーが足りず建物を買い戻せませんでした。<br />Not have enough cookies to buy back");
+							}
+							CookieAssistant.config.particular.sell.isAfterSell = 0;
+							return;
+						}
+
+						
+						var buffCount = 0;
+						var cliclBuffCount = 0;
+						var isDuaringDevastation = false;
+						for (var i in Game.buffs)
+						{
+							switch(Game.buffs[i].type.name)
+							{
+								case "dragonflight":
+								case "click frenzy":
+									cliclBuffCount++;
+									buffCount++;
+									break;
+								case "dragon harvest":
+								case "frenzy":
+								case "blood frenzy": //elder frenzy (x666)
+								case "sugar frenzy":
+								case "building buff":
+									buffCount++;
+									break;
+								case "devastation":
+									isDuaringDevastation = true;
+									break;
+								case "cursed finger":
+								default:
+									break;
+							}
+						}
+						//ゴジャモックのバフ中なので何もしない
+						if (isDuaringDevastation)
+						{
+							return;
+						}
+						var isMode0 = CookieAssistant.config.particular.sell.activate_mode == 0 && buffCount >= 1;
+						var isMode1 = CookieAssistant.config.particular.sell.activate_mode == 1 && buffCount >= 2;
+						var isMode2 = CookieAssistant.config.particular.sell.activate_mode == 2 && cliclBuffCount >= 1;
+						var isMode3 = CookieAssistant.config.particular.sell.activate_mode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
+						var isMode4 = CookieAssistant.config.particular.sell.activate_mode == 4 && CookieAssistant.isAfterSpellcast;
+						if (isMode0 || isMode1 || isMode2 || isMode3 || isMode4)
+						{
+							if (Game.Objects[objectName].amount < amount)
+							{
+								Game.Notify(CookieAssistant.name, "建物が少ないため売却に失敗しました。<br />Could not sell buildings due to not enough.");
+								return;
+							}
+							Game.Objects[objectName].sell(amount);
+							CookieAssistant.config.particular.sell.isAfterSell = 1;
+							CookieAssistant.isAfterSpellcast = false;
+						}
+					},
+					CookieAssistant.config.intervals.autoSellBuilding
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -857,10 +1015,44 @@ CookieAssistant.launch = function()
 				}
 				else
 				{
-					str += "<label>パンテオンがロックされています。アンロックするまでこの機能は使えません。</label><br />";
-					str += "<label>You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
+					str += "<label>⚠️パンテオンがロックされています。アンロックするまでこの機能は使えません。</label><br />";
+					str += "<label>⚠️You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
 				}
 		str +=	'</div></div>'
+		
+		//建物自動売却
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSellBuilding', 'CookieAssistant_autoSellBuilding', 'AutoSell Buildings ON', 'AutoSell Buildings OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoSellBuilding", 40, CookieAssistant.config.intervals.autoSellBuilding, "CookieAssistant.ChangeInterval('autoSellBuilding', this.value)");
+				}
+		str +=	'<div class="listing">'
+					+ '<label>Sell </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.target++; if(CookieAssistant.config.particular.sell.target >= Object.keys(Game.Objects).length){CookieAssistant.config.particular.sell.target = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ Game.ObjectsById[CookieAssistant.config.particular.sell.target].dname
+						+ '</a>'
+					+ '<label> for </label>'
+					+ m.InputBox("CookieAssistant_Amount_autoSellBuilding", 40, CookieAssistant.config.particular.sell.amount, "CookieAssistant.config.particular.sell.amount = this.value;")
+					+ '<label>When </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.activate_mode++; if(CookieAssistant.config.particular.sell.activate_mode >= Object.keys(CookieAssistant.modes.sell_buildings).length){CookieAssistant.config.particular.sell.activate_mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.sell_buildings[CookieAssistant.config.particular.sell.activate_mode].desc
+						+ '</a><br />'
+					+ '<label>Do After Activated / 発動後にやること : </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.after_mode++; if(CookieAssistant.config.particular.sell.after_mode >= Object.keys(CookieAssistant.modes.sell_buildings_after).length){CookieAssistant.config.particular.sell.after_mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.sell_buildings_after[CookieAssistant.config.particular.sell.after_mode].desc
+						+ '</a><br />';
+				
+				if (CookieAssistant.config.flags.autoSellBuilding)
+				{
+					var temple = Game.Objects['Temple'].minigame;
+					if (temple == undefined || !Game.Objects['Temple'].minigameLoaded || !temple.slot.includes(2))
+					{
+						str += "<label><b style='color: #ff0000'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
+						str += "<label><b style='color: #ff0000'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
+					}
+				}
+		str +=	'</div></div>';
 
 		str += "<br />"
 		str += m.Header('Misc');
