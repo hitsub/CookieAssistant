@@ -97,6 +97,10 @@ CookieAssistant.launch = function()
 					activate_mode: [],
 					after_mode: [],
 				},
+				wrinkler:
+				{
+					mode: 0,
+				},
 			}
 		};
 
@@ -244,6 +248,17 @@ CookieAssistant.launch = function()
 					desc: "Do nothing / 何もしない",
 				},
 			},
+			wrinkler:
+			{
+				0:
+				{
+					desc: "All Type / 全てのタイプ",
+				},
+				1:
+				{
+					desc: "Except Shiny Wrinkler / ピカピカのシワシワ虫を除く"
+				},
+			},
 		}
 
 		CookieAssistant.actions =
@@ -377,7 +392,17 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickWrinklers = setInterval(
 					() =>
 					{
-						Game.wrinklers.forEach(function(me){ if (me.close==1) me.hp = 0});
+						Game.wrinklers.forEach(wrinkler =>
+						{
+							if (wrinkler.close == 1)
+							{
+								if (CookieAssistant.config.particular.wrinkler.mode == 1 && wrinkler.type == 1)
+								{
+									return;
+								}
+								wrinkler.hp = 0;
+							}
+						});
 					},
 					CookieAssistant.config.intervals.autoClickWrinklers
 				)
@@ -886,6 +911,12 @@ CookieAssistant.launch = function()
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
+				+ '<div class="listing">'
+							+ '<label>MODE : </label>'
+							+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.wrinkler.mode++; if(CookieAssistant.config.particular.wrinkler.mode >= Object.keys(CookieAssistant.modes.wrinkler).length){CookieAssistant.config.particular.wrinkler.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+									+ CookieAssistant.modes.wrinkler[CookieAssistant.config.particular.wrinkler.mode].desc
+							+ '</a><br />'
+						+ '</div>'
 				+ '</div>';
 		//トナカイクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick ' + loc("Reindeer") + ' ON', 'AutoClick ' + loc("Reindeer") + ' OFF', "CookieAssistant.Toggle");
