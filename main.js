@@ -35,6 +35,7 @@ CookieAssistant.launch = function()
 				autoSetSpirits : 0,
 				autoHarvestSugarlump : 0,
 				autoSellBuilding : 0,
+				autoToggleGoldenSwitch : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -53,6 +54,7 @@ CookieAssistant.launch = function()
 				autoSetSpirits : 10000,
 				autoHarvestSugarlump : 60000,
 				autoSellBuilding : 500,
+				autoToggleGoldenSwitch : 500,
 			},
 			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
 			particular:
@@ -105,6 +107,11 @@ CookieAssistant.launch = function()
 				{
 					mode: 0,
 				},
+				goldenSwitch:
+				{
+					enable: 0,
+					disable: 0,
+				},
 			}
 		};
 
@@ -142,6 +149,7 @@ CookieAssistant.launch = function()
 			autoSetSpirits : null,
 			autoHarvestSugarlump : null,
 			autoSellBuilding : null,
+			autoToggleGoldenSwitch : null,
 		}
 
 		CookieAssistant.modes =
@@ -281,6 +289,36 @@ CookieAssistant.launch = function()
 				{
 					desc: "Have two or more buffs / バフが2つ以上"
 				}
+			},
+			goldenSwitch_enable:
+			{
+				0:
+				{
+					desc: "Have one buff / バフが1つ"
+				},
+				1:
+				{
+					desc: "Have two or more buffs / バフが2つ以上"
+				},
+				2:
+				{
+					desc: "Have click buff / クリック系のバフ",
+				},
+				3:
+				{
+					desc: "Have two or more buffs including click buff / クリック系を含めて2つ以上のバフ",
+				},
+			},
+			goldenSwitch_disable:
+			{
+				0:
+				{
+					desc: "No buffs / バフがない"
+				},
+				1:
+				{
+					desc: "No click buffs / クリックバフが無いとき"
+				},
 			}
 		}
 
@@ -732,6 +770,69 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoSellBuilding
 				);
 			},
+			autoToggleGoldenSwitch : () =>
+			{
+				CookieAssistant.intervalHandles.autoToggleGoldenSwitch = setInterval(
+					() =>
+					{
+						let off = Game.UpgradesInStore.find(x => x.name == "Golden switch [off]");
+						let on = Game.UpgradesInStore.find(x => x.name == "Golden switch [on]");
+						let enableMode = CookieAssistant.config.particular.goldenSwitch.enable;
+						let disableMode = CookieAssistant.config.particular.goldenSwitch.disable;
+						let buffCount = 0;
+						let cliclBuffCount = 0;
+						for (let i in Game.buffs)
+						{
+							switch(Game.buffs[i].type.name)
+							{
+								case "dragonflight":
+								case "click frenzy":
+									cliclBuffCount++;
+									buffCount++;
+									break;
+								case "dragon harvest":
+								case "frenzy":
+								case "blood frenzy": //elder frenzy (x666)
+								case "sugar frenzy":
+								case "building buff":
+								case "devastation":
+									buffCount++;
+									break;
+								case "cursed finger":
+								default:
+									break;
+							}
+						}
+						//スイッチがOFFのとき
+						if (off != undefined)
+						{
+							let isMode0 = enableMode == 0 && buffCount >= 1;
+							let isMode1 = enableMode == 1 && buffCount >= 2;
+							let isMode2 = enableMode == 2 && cliclBuffCount >= 1;
+							let isMode3 = enableMode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
+
+							console.log("OFF 0:"+isMode0 + ", 1:" + isMode1 + ", 2:"+isMode2 + ",3:"+isMode3);
+
+							if (isMode0 || isMode1 || isMode2 || isMode3)
+							{
+								off.buy();
+							}
+						}
+						//スイッチがONのとき
+						if (on != undefined)
+						{
+							let isMode0 = disableMode == 0 && buffCount == 0;
+							let isMode1 = disableMode == 1 && cliclBuffCount == 0;
+
+							if (isMode0 || isMode1)
+							{
+								on.buy();
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoToggleGoldenSwitch
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -1180,6 +1281,20 @@ CookieAssistant.launch = function()
 			str += "<label><b style='color: #ff0000'>⚠️発動条件が同一の設定があるため、無意味な売却が発生する可能性があります。</b></label><br />";
 			str += "<label><b style='color: #ff0000'>⚠️There are settings with same triggering conditions, so may sell buildings in meaningless.</b></label><br />";
 		}
+
+		//ゴールデンスイッチ自動切換え
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoToggleGoldenSwitch', 'CookieAssistant_autoToggleGoldenSwitch', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' ON', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' OFF', "CookieAssistant.Toggle")
+			+ '<div class="listing">'
+				+ '<label>Enable When : </label>'
+				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.goldenSwitch.enable++; if(CookieAssistant.config.particular.goldenSwitch.enable >= Object.keys(CookieAssistant.modes.goldenSwitch_enable).length){CookieAssistant.config.particular.goldenSwitch.enable = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+						+ CookieAssistant.modes.goldenSwitch_enable[CookieAssistant.config.particular.goldenSwitch.enable].desc
+				+ '</a><br />'
+				+ '<label>Disable When : </label>'
+				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.goldenSwitch.disable++; if(CookieAssistant.config.particular.goldenSwitch.disable >= Object.keys(CookieAssistant.modes.goldenSwitch_disable).length){CookieAssistant.config.particular.goldenSwitch.disable = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+						+ CookieAssistant.modes.goldenSwitch_disable[CookieAssistant.config.particular.goldenSwitch.disable].desc
+				+ '</a><br />'
+			+ '</div>'
+			+ '</div>';
 
 		str += "<br />"
 		str += m.Header('Misc');
