@@ -101,6 +101,10 @@ CookieAssistant.launch = function()
 				{
 					mode: 0,
 				},
+				bigCookie:
+				{
+					mode: 0,
+				},
 			}
 		};
 
@@ -259,6 +263,25 @@ CookieAssistant.launch = function()
 					desc: "Except Shiny Wrinkler / ピカピカのシワシワ虫を除く"
 				},
 			},
+			bigCookie:
+			{
+				0:
+				{
+					desc: "Always / 常に",
+				},
+				1:
+				{
+					desc: "Have any click buff / クリック系バフ中" 
+				},
+				2:
+				{
+					desc: "Have one buff / バフが1つ"
+				},
+				3:
+				{
+					desc: "Have two or more buffs / バフが2つ以上"
+				}
+			}
 		}
 
 		CookieAssistant.actions =
@@ -278,8 +301,41 @@ CookieAssistant.launch = function()
 						{
 							return;
 						}
-						bigCookie.click();
-						Game.lastClick = 0;
+		
+						let buffCount = 0;
+						let cliclBuffCount = 0;
+						for (let i in Game.buffs)
+						{
+							switch(Game.buffs[i].type.name)
+							{
+								case "dragonflight":
+								case "click frenzy":
+									cliclBuffCount++;
+									buffCount++;
+									break;
+								case "dragon harvest":
+								case "frenzy":
+								case "blood frenzy": //elder frenzy (x666)
+								case "sugar frenzy":
+								case "building buff":
+								case "devastation":
+									buffCount++;
+									break;
+								case "cursed finger":
+								default:
+									break;
+							}
+						}
+						let mode = CookieAssistant.config.particular.bigCookie.mode;
+						let isMode0 = mode == 0;
+						let isMode1 = mode == 1 && cliclBuffCount >= 1;
+						let isMode2 = mode == 2 && buffCount >= 1;
+						let isMode3 = mode == 3 && buffCount >= 2;
+						if (isMode0 || isMode1 || isMode2 || isMode3)
+						{
+							bigCookie.click();
+							Game.lastClick = 0;
+						}
 					},
 					CookieAssistant.config.intervals.autoClickBigCookie
 				)
@@ -895,6 +951,12 @@ CookieAssistant.launch = function()
 					+ '<label></label><a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.bigCookie.isMute++; if(CookieAssistant.config.particular.bigCookie.isMute >= 2){CookieAssistant.config.particular.bigCookie.isMute = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ (CookieAssistant.config.particular.bigCookie.isMute ? 'Mute Click SE' : 'Play Click SE')
 					+ '</a><br />'
+				+ '<div class="listing">'
+					+ '<label>MODE : </label>'
+					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.bigCookie.mode++; if(CookieAssistant.config.particular.bigCookie.mode >= Object.keys(CookieAssistant.modes.bigCookie).length){CookieAssistant.config.particular.bigCookie.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.bigCookie[CookieAssistant.config.particular.bigCookie.mode].desc
+					+ '</a><br />'
+				+ '</div>'
 				+ '</div>';
 		//黄金クッキークリック
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
