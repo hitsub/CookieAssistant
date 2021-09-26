@@ -8,7 +8,7 @@ if(typeof CCSE == 'undefined')
 }
 
 CookieAssistant.name = 'Cookie Assistant';
-CookieAssistant.version = '0.5.0';
+CookieAssistant.version = '0.6.0';
 CookieAssistant.GameVersion = '2.042';
 
 
@@ -34,6 +34,8 @@ CookieAssistant.launch = function()
 				autoTrainDragon : 0,
 				autoSetSpirits : 0,
 				autoHarvestSugarlump : 0,
+				autoSellBuilding : 0,
+				autoToggleGoldenSwitch : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -51,6 +53,8 @@ CookieAssistant.launch = function()
 				autoTrainDragon : 1000,
 				autoSetSpirits : 10000,
 				autoHarvestSugarlump : 60000,
+				autoSellBuilding : 500,
+				autoToggleGoldenSwitch : 500,
 			},
 			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
 			particular:
@@ -83,6 +87,31 @@ CookieAssistant.launch = function()
 				{
 					mode: 0,
 				},
+				bigCookie:
+				{
+					isMute: 1,
+				},
+				sell:
+				{
+					isAfterSell: [], //売却後かどうかのフラグ保持(作動中にゲームを落としても動作するように)
+					target: [],
+					amount: [],
+					activate_mode: [],
+					after_mode: [],
+				},
+				wrinkler:
+				{
+					mode: 0,
+				},
+				bigCookie:
+				{
+					mode: 0,
+				},
+				goldenSwitch:
+				{
+					enable: 0,
+					disable: 0,
+				},
 			}
 		};
 
@@ -95,7 +124,14 @@ CookieAssistant.launch = function()
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
 
+        CCSE.SpliceCodeIntoFunction(
+			"Game.playCookieClickSound",
+			2,
+			"if (CookieAssistant.config.particular.bigCookie.isMute) { return; }"
+		);
+
 		CookieAssistant.showAllIntervals = false;
+		CookieAssistant.isAfterSpellcast = false;
 
 		CookieAssistant.intervalHandles = 
 		{
@@ -112,6 +148,8 @@ CookieAssistant.launch = function()
 			autoTrainDragon : null,
 			autoSetSpirits : null,
 			autoHarvestSugarlump : null,
+			autoSellBuilding : null,
+			autoToggleGoldenSwitch : null,
 		}
 
 		CookieAssistant.modes =
@@ -184,6 +222,104 @@ CookieAssistant.launch = function()
 					desc: "Ignore Wrath Cookie / 怒りのクッキーは無視する"
 				}
 			},
+			sell_buildings: //建物自動売却の発動条件
+			{
+				0:
+				{
+					desc: "Have one buff / バフが1つ",
+				},
+				1:
+				{
+					desc: "Have two or more buffs / バフが2つ以上",
+				},
+				2:
+				{
+					desc: "Have click buff / クリック系のバフ",
+				},
+				3:
+				{
+					desc: "Have two or more buffs including click buff / クリック系を含めて2つ以上のバフ",
+				},
+				4:
+				{
+					desc: "After auto-spellcast / 自動詠唱の後",
+				},
+			},
+			sell_buildings_after: //建物自動売却を行った後の動作
+			{
+				0:
+				{
+					desc: "Buy back the amount sold / 売った分だけ買い戻す",
+				},
+				1:
+				{
+					desc: "Spellcast if can, and buy back / 詠唱してから買い戻す",
+				},
+				2:
+				{
+					desc: "Do nothing / 何もしない",
+				},
+			},
+			wrinkler:
+			{
+				0:
+				{
+					desc: "All Type / 全てのタイプ",
+				},
+				1:
+				{
+					desc: "Except Shiny Wrinkler / ピカピカのシワシワ虫を除く"
+				},
+			},
+			bigCookie:
+			{
+				0:
+				{
+					desc: "Always / 常に",
+				},
+				1:
+				{
+					desc: "Have any click buff / クリック系バフ中" 
+				},
+				2:
+				{
+					desc: "Have one buff / バフが1つ"
+				},
+				3:
+				{
+					desc: "Have two or more buffs / バフが2つ以上"
+				}
+			},
+			goldenSwitch_enable:
+			{
+				0:
+				{
+					desc: "Have one buff / バフが1つ"
+				},
+				1:
+				{
+					desc: "Have two or more buffs / バフが2つ以上"
+				},
+				2:
+				{
+					desc: "Have click buff / クリック系のバフ",
+				},
+				3:
+				{
+					desc: "Have two or more buffs including click buff / クリック系を含めて2つ以上のバフ",
+				},
+			},
+			goldenSwitch_disable:
+			{
+				0:
+				{
+					desc: "No buffs / バフがない"
+				},
+				1:
+				{
+					desc: "No click buffs / クリックバフが無いとき"
+				},
+			}
 		}
 
 		CookieAssistant.actions =
@@ -193,13 +329,51 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
 					() =>
 					{
+						//BGMがおかしくなるので最初の1秒は実行しない
+						if (Game.T < Game.fps)
+						{
+							return;
+						}
 						//転生中は動作を止める
 						if (Game.OnAscend)
 						{
 							return;
 						}
-						bigCookie.click();
-						Game.lastClick = 0;
+		
+						let buffCount = 0;
+						let cliclBuffCount = 0;
+						for (let i in Game.buffs)
+						{
+							switch(Game.buffs[i].type.name)
+							{
+								case "dragonflight":
+								case "click frenzy":
+									cliclBuffCount++;
+									buffCount++;
+									break;
+								case "dragon harvest":
+								case "frenzy":
+								case "blood frenzy": //elder frenzy (x666)
+								case "sugar frenzy":
+								case "building buff":
+								case "devastation":
+									buffCount++;
+									break;
+								case "cursed finger":
+								default:
+									break;
+							}
+						}
+						let mode = CookieAssistant.config.particular.bigCookie.mode;
+						let isMode0 = mode == 0;
+						let isMode1 = mode == 1 && cliclBuffCount >= 1;
+						let isMode2 = mode == 2 && buffCount >= 1;
+						let isMode3 = mode == 3 && buffCount >= 2;
+						if (isMode0 || isMode1 || isMode2 || isMode3)
+						{
+							bigCookie.click();
+							Game.lastClick = 0;
+						}
 					},
 					CookieAssistant.config.intervals.autoClickBigCookie
 				)
@@ -294,6 +468,14 @@ CookieAssistant.launch = function()
 						if (cost <= Math.floor(grimoire.magic) && buffCount >= CookieAssistant.modes.spell_buff[CookieAssistant.config.particular.spell.mode2].count)
 						{
 							grimoire.castSpell(spell);
+							CookieAssistant.isAfterSpellcast = true;
+							setTimeout(() =>
+							{
+								if (CookieAssistant.isAfterSpellcast)
+								{
+									CookieAssistant.isAfterSpellcast = false;
+								}
+							}, 3000);
 						}
 					},
 					CookieAssistant.config.intervals.autoSpellonBuff
@@ -304,7 +486,17 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickWrinklers = setInterval(
 					() =>
 					{
-						Game.wrinklers.forEach(function(me){ if (me.close==1) me.hp = 0});
+						Game.wrinklers.forEach(wrinkler =>
+						{
+							if (wrinkler.close == 1)
+							{
+								if (CookieAssistant.config.particular.wrinkler.mode == 1 && wrinkler.type == 1)
+								{
+									return;
+								}
+								wrinkler.hp = 0;
+							}
+						});
 					},
 					CookieAssistant.config.intervals.autoClickWrinklers
 				)
@@ -556,11 +748,191 @@ CookieAssistant.launch = function()
 					},
 					CookieAssistant.config.intervals.autoHarvestSugarlump
 				);
-			}
+			},
+			autoSellBuilding : () =>
+			{
+				CookieAssistant.intervalHandles.autoSellBuilding = setInterval(
+					() =>
+					{
+						for(var i = 0; i < CookieAssistant.config.particular.sell.isAfterSell.length; i++)
+						{
+							var target = CookieAssistant.config.particular.sell.target[i];
+							var amount = CookieAssistant.config.particular.sell.amount[i];
+							var activate_mode = CookieAssistant.config.particular.sell.activate_mode[i];
+							var after_mode = CookieAssistant.config.particular.sell.after_mode[i];
+							var isSold = CookieAssistant.sellBuildings(i, target, amount, activate_mode, after_mode);
+							if (isSold) //優先度が高いものを売却した場合、以降の優先度の売却はトライせずに処理を終了する
+							{
+								break;
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoSellBuilding
+				);
+			},
+			autoToggleGoldenSwitch : () =>
+			{
+				CookieAssistant.intervalHandles.autoToggleGoldenSwitch = setInterval(
+					() =>
+					{
+						let off = Game.UpgradesInStore.find(x => x.name == "Golden switch [off]");
+						let on = Game.UpgradesInStore.find(x => x.name == "Golden switch [on]");
+						let enableMode = CookieAssistant.config.particular.goldenSwitch.enable;
+						let disableMode = CookieAssistant.config.particular.goldenSwitch.disable;
+						let buffCount = 0;
+						let cliclBuffCount = 0;
+						for (let i in Game.buffs)
+						{
+							switch(Game.buffs[i].type.name)
+							{
+								case "dragonflight":
+								case "click frenzy":
+									cliclBuffCount++;
+									buffCount++;
+									break;
+								case "dragon harvest":
+								case "frenzy":
+								case "blood frenzy": //elder frenzy (x666)
+								case "sugar frenzy":
+								case "building buff":
+								case "devastation":
+									buffCount++;
+									break;
+								case "cursed finger":
+								default:
+									break;
+							}
+						}
+						//スイッチがOFFのとき
+						if (off != undefined)
+						{
+							let isMode0 = enableMode == 0 && buffCount >= 1;
+							let isMode1 = enableMode == 1 && buffCount >= 2;
+							let isMode2 = enableMode == 2 && cliclBuffCount >= 1;
+							let isMode3 = enableMode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
+
+							console.log("OFF 0:"+isMode0 + ", 1:" + isMode1 + ", 2:"+isMode2 + ",3:"+isMode3);
+
+							if (isMode0 || isMode1 || isMode2 || isMode3)
+							{
+								off.buy();
+							}
+						}
+						//スイッチがONのとき
+						if (on != undefined)
+						{
+							let isMode0 = disableMode == 0 && buffCount == 0;
+							let isMode1 = disableMode == 1 && cliclBuffCount == 0;
+
+							if (isMode0 || isMode1)
+							{
+								on.buy();
+							}
+						}
+					},
+					CookieAssistant.config.intervals.autoToggleGoldenSwitch
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
 		CookieAssistant.CheckUpdate();
+	}
+
+	CookieAssistant.sellBuildings = function(index, target, amount, activate_mode, after_mode)
+	{
+		var objectName = Game.ObjectsById[target].name;
+		var amount = parseInt(amount);
+		if (CookieAssistant.config.particular.sell.isAfterSell[index])
+		{
+			if (after_mode == 2)//Do nothing
+			{
+				CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
+				return false;
+			}
+			if (after_mode == 1)//Spellcast and buy back
+			{
+				var grimoire = Game.ObjectsById[7].minigame;
+				if (grimoire == undefined)
+				{
+					Game.Notify(CookieAssistant.name, "You have not unlocked the Grimoire yet, so failed to spellcast.<br />グリモア解放前のため、呪文の発動に失敗しました。", "", 3);
+					CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
+					return false;
+				}
+				var spell = grimoire.spells['hand of fate'];
+				var cost = Math.floor(spell.costMin + grimoire.magicM * spell.costPercent);
+				if (cost <= Math.floor(grimoire.magic))
+				{
+					grimoire.castSpell(spell);
+				}
+			}
+			if (Game.cookies >= Game.Objects[objectName].getSumPrice(amount))
+			{
+				if (Game.buyMode < 0)
+				{
+					Game.buyMode = 1;
+				}
+				Game.Objects[objectName].buy(amount);
+			}
+			else
+			{
+				console.log("Game.cookies :" + Game.cookies + ", Requirement : " + Game.Objects[objectName].getSumPrice(amount));
+				Game.Notify(CookieAssistant.name, "クッキーが足りず建物を買い戻せませんでした。<br />Not have enough cookies to buy back");
+			}
+			CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
+			return false;
+		}
+
+		
+		var buffCount = 0;
+		var cliclBuffCount = 0;
+		var isDuaringDevastation = false;
+		for (var i in Game.buffs)
+		{
+			switch(Game.buffs[i].type.name)
+			{
+				case "dragonflight":
+				case "click frenzy":
+					cliclBuffCount++;
+					buffCount++;
+					break;
+				case "dragon harvest":
+				case "frenzy":
+				case "blood frenzy": //elder frenzy (x666)
+				case "sugar frenzy":
+				case "building buff":
+					buffCount++;
+					break;
+				case "devastation":
+					isDuaringDevastation = true;
+					break;
+				case "cursed finger":
+				default:
+					break;
+			}
+		}
+		//ゴジャモックのバフ中なので何もしない
+		if (isDuaringDevastation)
+		{
+			return false;
+		}
+		var isMode0 = activate_mode == 0 && buffCount >= 1;
+		var isMode1 = activate_mode == 1 && buffCount >= 2;
+		var isMode2 = activate_mode == 2 && cliclBuffCount >= 1;
+		var isMode3 = activate_mode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
+		var isMode4 = activate_mode == 4 && CookieAssistant.isAfterSpellcast;
+		if (isMode0 || isMode1 || isMode2 || isMode3 || isMode4)
+		{
+			if (Game.Objects[objectName].amount < amount)
+			{
+				Game.Notify(CookieAssistant.name, "建物が少ないため売却に失敗しました。<br />Could not sell buildings due to not enough.");
+				return false;
+			}
+			Game.Objects[objectName].sell(amount);
+			CookieAssistant.config.particular.sell.isAfterSell[index] = 1;
+			CookieAssistant.isAfterSpellcast = false;
+			return true;
+		}
 	}
 
 	CookieAssistant.restoreDefaultConfig = function(mode){
@@ -677,6 +1049,15 @@ CookieAssistant.launch = function()
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickBigCookie, "CookieAssistant.ChangeInterval('autoClickBigCookie', this.value)")
+					+ '<label></label><a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.bigCookie.isMute++; if(CookieAssistant.config.particular.bigCookie.isMute >= 2){CookieAssistant.config.particular.bigCookie.isMute = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ (CookieAssistant.config.particular.bigCookie.isMute ? 'Mute Click SE' : 'Play Click SE')
+					+ '</a><br />'
+				+ '<div class="listing">'
+					+ '<label>MODE : </label>'
+					+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.bigCookie.mode++; if(CookieAssistant.config.particular.bigCookie.mode >= Object.keys(CookieAssistant.modes.bigCookie).length){CookieAssistant.config.particular.bigCookie.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.bigCookie[CookieAssistant.config.particular.bigCookie.mode].desc
+					+ '</a><br />'
+				+ '</div>'
 				+ '</div>';
 		//黄金クッキークリック
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
@@ -693,6 +1074,12 @@ CookieAssistant.launch = function()
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
+				+ '<div class="listing">'
+							+ '<label>MODE : </label>'
+							+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.wrinkler.mode++; if(CookieAssistant.config.particular.wrinkler.mode >= Object.keys(CookieAssistant.modes.wrinkler).length){CookieAssistant.config.particular.wrinkler.mode = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+									+ CookieAssistant.modes.wrinkler[CookieAssistant.config.particular.wrinkler.mode].desc
+							+ '</a><br />'
+						+ '</div>'
 				+ '</div>';
 		//トナカイクリック
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick ' + loc("Reindeer") + ' ON', 'AutoClick ' + loc("Reindeer") + ' OFF', "CookieAssistant.Toggle");
@@ -839,10 +1226,75 @@ CookieAssistant.launch = function()
 				}
 				else
 				{
-					str += "<label>パンテオンがロックされています。アンロックするまでこの機能は使えません。</label><br />";
-					str += "<label>You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
+					str += "<label>⚠️パンテオンがロックされています。アンロックするまでこの機能は使えません。</label><br />";
+					str += "<label>⚠️You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
 				}
 		str +=	'</div></div>'
+		
+		//建物自動売却
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSellBuilding', 'CookieAssistant_autoSellBuilding', 'AutoSell Buildings ON', 'AutoSell Buildings OFF', "CookieAssistant.Toggle");
+				if (CookieAssistant.showAllIntervals)
+				{
+					str += '<label>Interval(ms) : </label>'
+						+ m.InputBox("CookieAssistant_Interval_autoSellBuilding", 40, CookieAssistant.config.intervals.autoSellBuilding, "CookieAssistant.ChangeInterval('autoSellBuilding', this.value)");
+				}
+		str +=	'<div class="listing"><ol style="list-style: inside;list-style-type: decimal;">';
+				for (var i_sellconf = 0; i_sellconf < CookieAssistant.config.particular.sell.isAfterSell.length; i_sellconf++)
+				{
+					str += '<li><label>Sell </label>'
+						+ '<a class="option" ' + Game.clickStr + '="CookieAssistant.config.particular.sell.target[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.target[' + i_sellconf + '] >= Object.keys(Game.Objects).length){CookieAssistant.config.particular.sell.target[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ Game.ObjectsById[CookieAssistant.config.particular.sell.target[i_sellconf]].dname
+						+ '</a>'
+					+ '<label> for </label>'
+					+ m.InputBox("CookieAssistant_Amount_autoSellBuilding", 40, CookieAssistant.config.particular.sell.amount[i_sellconf], "CookieAssistant.config.particular.sell.amount[" + i_sellconf + "] = this.value;")
+					+ '<label>When </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + '] >= Object.keys(CookieAssistant.modes.sell_buildings).length){CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.sell_buildings[CookieAssistant.config.particular.sell.activate_mode[i_sellconf]].desc
+						+ '</a><br />'
+					+ '<label>Do After Activated / 発動後にやること : </label>'
+						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + '] >= Object.keys(CookieAssistant.modes.sell_buildings_after).length){CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+							+ CookieAssistant.modes.sell_buildings_after[CookieAssistant.config.particular.sell.after_mode[i_sellconf]].desc
+						+ '</a><br /></li>';
+				}
+		str +=	'</ol>';
+		if (CookieAssistant.config.particular.sell.isAfterSell.length < Object.keys(CookieAssistant.modes.sell_buildings).length)
+		{
+			str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.addSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Add Config</a>';
+		}
+		if (CookieAssistant.config.particular.sell.isAfterSell.length > 0)
+		{
+			str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.removeSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Remove Last</a>';
+		}
+		str +=	'</div></div>';
+				
+		if (CookieAssistant.config.flags.autoSellBuilding)
+		{
+			var temple = Game.Objects['Temple'].minigame;
+			if (temple == undefined || !Game.Objects['Temple'].minigameLoaded || !temple.slot.includes(2))
+			{
+				str += "<label><b style='color: #ff0000'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
+				str += "<label><b style='color: #ff0000'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
+			}
+		}
+		if (CookieAssistant.config.particular.sell.activate_mode.filter((x, i, self) => self.indexOf(x) != i).length > 0)
+		{
+			str += "<label><b style='color: #ff0000'>⚠️発動条件が同一の設定があるため、無意味な売却が発生する可能性があります。</b></label><br />";
+			str += "<label><b style='color: #ff0000'>⚠️There are settings with same triggering conditions, so may sell buildings in meaningless.</b></label><br />";
+		}
+
+		//ゴールデンスイッチ自動切換え
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoToggleGoldenSwitch', 'CookieAssistant_autoToggleGoldenSwitch', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' ON', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' OFF', "CookieAssistant.Toggle")
+			+ '<div class="listing">'
+				+ '<label>Enable When : </label>'
+				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.goldenSwitch.enable++; if(CookieAssistant.config.particular.goldenSwitch.enable >= Object.keys(CookieAssistant.modes.goldenSwitch_enable).length){CookieAssistant.config.particular.goldenSwitch.enable = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+						+ CookieAssistant.modes.goldenSwitch_enable[CookieAssistant.config.particular.goldenSwitch.enable].desc
+				+ '</a><br />'
+				+ '<label>Disable When : </label>'
+				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.goldenSwitch.disable++; if(CookieAssistant.config.particular.goldenSwitch.disable >= Object.keys(CookieAssistant.modes.goldenSwitch_disable).length){CookieAssistant.config.particular.goldenSwitch.disable = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+						+ CookieAssistant.modes.goldenSwitch_disable[CookieAssistant.config.particular.goldenSwitch.disable].desc
+				+ '</a><br />'
+			+ '</div>'
+			+ '</div>';
 
 		str += "<br />"
 		str += m.Header('Misc');
@@ -902,6 +1354,26 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles[key] = null;
 			}
 		}
+	}
+
+	CookieAssistant.addSellConfig = function()
+	{
+		CookieAssistant.config.particular.sell.isAfterSell.push(0);
+		CookieAssistant.config.particular.sell.target.push(0);
+		CookieAssistant.config.particular.sell.amount.push(0);
+		CookieAssistant.config.particular.sell.activate_mode.push(0);
+		CookieAssistant.config.particular.sell.after_mode.push(0);
+		return;
+	}
+
+	CookieAssistant.removeSellConfig = function()
+	{
+		CookieAssistant.config.particular.sell.isAfterSell.pop();
+		CookieAssistant.config.particular.sell.target.pop();
+		CookieAssistant.config.particular.sell.amount.pop();
+		CookieAssistant.config.particular.sell.activate_mode.pop();
+		CookieAssistant.config.particular.sell.after_mode.pop();
+		return;
 	}
 	
 	CookieAssistant.save = function()
