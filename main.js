@@ -586,7 +586,6 @@ CookieAssistant.launch = function()
 						{
 							if (valentinesRate >= 1)
 							{
-								// console.log("Complete Valentines");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -598,7 +597,6 @@ CookieAssistant.launch = function()
 							}
 							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
 							{
-								// console.log("Complete Christmas");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -606,7 +604,6 @@ CookieAssistant.launch = function()
 						{
 							if (easterRate >= 1)
 							{
-								// console.log("Complete Easter");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -622,18 +619,15 @@ CookieAssistant.launch = function()
 							//エルダー宣誓の時間が残っている場合はエルダー誓約を発動する(エルダー宣誓の時間リセットのため)
 							if (Game.pledgeT >= 1 && Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
 							{
-								// console.log("Buy Elder Covenant");
 								Game.Upgrades["Elder Covenant"].buy();
 							}
 							//エルダー誓約の撤回が出来る場合はする（Wrinklerをスポーンさせる必要があるため）
 							if (Game.UpgradesInStore.indexOf(Game.Upgrades["Revoke Elder Covenant"]) != -1)
 							{
-								// console.log("Buy Revoke Elder Covenant");
 								Game.Upgrades["Revoke Elder Covenant"].buy();
 							}
 							if (halloweenRate >= 1)
 							{
-								// console.log("Complete Halloween");
 								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
 								Game.Upgrades["Elder Covenant"].buy(1);
 								CookieAssistant.SwitchNextSeason();
@@ -649,7 +643,6 @@ CookieAssistant.launch = function()
 					() =>
 					{
 						var amountPerPurchase = CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].amount;
-						// console.log(l('products').innerHTML);
 						for (const objectName in Game.Objects)
 						{
 							var amount = Game.Objects[objectName].amount % amountPerPurchase == 0 ? amountPerPurchase : amountPerPurchase - Game.Objects[objectName].amount % amountPerPurchase;
@@ -811,8 +804,6 @@ CookieAssistant.launch = function()
 							let isMode2 = enableMode == 2 && cliclBuffCount >= 1;
 							let isMode3 = enableMode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
 
-							console.log("OFF 0:"+isMode0 + ", 1:" + isMode1 + ", 2:"+isMode2 + ",3:"+isMode3);
-
 							if (isMode0 || isMode1 || isMode2 || isMode3)
 							{
 								off.buy();
@@ -876,7 +867,6 @@ CookieAssistant.launch = function()
 			}
 			else
 			{
-				console.log("Game.cookies :" + Game.cookies + ", Requirement : " + Game.Objects[objectName].getSumPrice(amount));
 				Game.Notify(CookieAssistant.name, "クッキーが足りず建物を買い戻せませんでした。<br />Not have enough cookies to buy back");
 			}
 			CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
@@ -954,8 +944,6 @@ CookieAssistant.launch = function()
 		];
 		
 		var targetSeason = "";
-		// console.log("シーズン獲得状況 : ");
-		// console.log(isCompletes);
 		
 		for (var i in seasons)
 		{
@@ -972,7 +960,6 @@ CookieAssistant.launch = function()
 		}
 		if (targetSeason != "")
 		{
-			// console.log("ChangeSeason : " + targetSeason);
 			if (targetSeason == Game.season)
 			{
 				//値の直接書き換えになってしまうが、内部のシーズンキャンセルの挙動もこれなので許してくれ
