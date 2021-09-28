@@ -579,7 +579,10 @@ CookieAssistant.launch = function()
 						{
 							if (winterSantaRate < 1 || Game.santaLevel < 14)
 							{
+								Game.specialTab = "santa";
+								Game.ToggleSpecialMenu(true);
 								Game.UpgradeSanta();
+								Game.ToggleSpecialMenu(false);
 							}
 							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
 							{
