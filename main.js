@@ -383,17 +383,10 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickGoldenCookie = setInterval(
 					() =>
 					{
-						for (var i in Game.shimmers)
-						{
-							if(Game.shimmers[i].type == "golden")
-							{
-								if (CookieAssistant.config.particular.golden.mode == 1 && Game.shimmers[i].wrath != 0)
-								{
-									continue;
-								}
-								Game.shimmers[i].pop();
-							}
-						}
+						Game.shimmers
+							.filter(shimmer => shimmer.type == "golden")
+							.filter(shimmer => !(CookieAssistant.config.particular.golden.mode == 1 &&shimmer.wrath != 0))
+							.forEach(shimmer => shimmer.pop())
 					},
 					CookieAssistant.config.intervals.autoClickGoldenCookie
 				)
@@ -403,13 +396,9 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickReindeer = setInterval(
 					() =>
 					{
-						for (var i in Game.shimmers)
-						{
-							if(Game.shimmers[i].type == "reindeer")
-							{
-								Game.shimmers[i].pop();
-							}
-						}
+						Game.shimmers
+							.filter(shimmer => shimmer.type == "reindeer")
+							.forEach(shimmer => shimmer.pop())
 					},
 					CookieAssistant.config.intervals.autoClickReindeer
 				)
