@@ -568,7 +568,10 @@ CookieAssistant.launch = function()
 						{
 							if (winterSantaRate < 1 || Game.santaLevel < 14)
 							{
+								Game.specialTab = "santa";
+								Game.ToggleSpecialMenu(true);
 								Game.UpgradeSanta();
+								Game.ToggleSpecialMenu(false);
 							}
 							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
 							{
@@ -650,14 +653,35 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoTrainDragon = setInterval(
 					() =>
 					{
-						if (Game.dragonLevel < Game.dragonLevels.length - 1 && Game.dragonLevels[Game.dragonLevel].cost())
+						Math.seedrandom(Game.seed+'/dragonTime');
+						let drops = ['Dragon scale', 'Dragon claw', 'Dragon fang', 'Dragon teddy bear'];
+						drops=shuffle(drops);
+						Math.seedrandom();
+						let currentDrop = drops[Math.floor((new Date().getMinutes() / 60) * drops.length)];
+
+						let canTrain = Game.dragonLevel < Game.dragonLevels.length - 1 && Game.dragonLevels[Game.dragonLevel].cost();
+						let canPet = Game.dragonLevel >= 8 && Game.Has("Pet the dragon") && !Game.Has(currentDrop) && !Game.HasUnlocked(currentDrop);
+
+						if (canTrain || canPet)
 						{
-							Game.UpgradeDragon();
-							if (Game.dragonLevel == Game.dragonLevels.length - 1)
+							Game.specialTab = "dragon";
+							Game.ToggleSpecialMenu(true);
+							//育成
+							if (canTrain)
 							{
-								Game.dragonAura = CookieAssistant.config.particular.dragon.aura1;
-								Game.dragonAura2 = CookieAssistant.config.particular.dragon.aura2;
+								Game.UpgradeDragon();
+								if (Game.dragonLevel == Game.dragonLevels.length - 1)
+								{
+									Game.dragonAura = CookieAssistant.config.particular.dragon.aura1;
+									Game.dragonAura2 = CookieAssistant.config.particular.dragon.aura2;
+								}
 							}
+							//なでる
+							if (canPet)
+							{
+								Game.ClickSpecialPic();
+							}
+							Game.ToggleSpecialMenu(false);
 						}
 					},
 					CookieAssistant.config.intervals.autoTrainDragon
