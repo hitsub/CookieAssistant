@@ -124,11 +124,28 @@ CookieAssistant.launch = function()
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
 
+		//大クッキーのSEミュート
         CCSE.SpliceCodeIntoFunction(
 			"Game.playCookieClickSound",
 			2,
 			"if (CookieAssistant.config.particular.bigCookie.isMute) { return; }"
 		);
+
+		//建物売買のSEミュート
+		for (const objectName of Object.keys(Game.Objects)) {
+			CCSE.ReplaceCodeIntoFunction(
+				"Game.Objects['" + objectName + "'].sell",
+				"PlaySound('snd/sell'+choose([1,2,3,4])+'.mp3',0.75);",
+				"if (!CookieAssistant.config.flags.autoSellBuilding) {PlaySound('snd/sell'+choose([1,2,3,4])+'.mp3',0.75);}",
+				0
+			);
+			CCSE.ReplaceCodeIntoFunction(
+				"Game.Objects['" + objectName + "'].buy",
+				"PlaySound('snd/buy'+choose([1,2,3,4])+'.mp3',0.75);",
+				"if (!CookieAssistant.config.flags.autoSellBuilding) {PlaySound('snd/buy'+choose([1,2,3,4])+'.mp3',0.75);}",
+				0
+			);
+		}
 
 		CookieAssistant.showAllIntervals = false;
 		CookieAssistant.isAfterSpellcast = false;
@@ -243,6 +260,14 @@ CookieAssistant.launch = function()
 				4:
 				{
 					desc: "After auto-spellcast / 自動詠唱の後",
+				},
+				5:
+				{
+					desc: "Always / 常に"
+				},
+				6:
+				{
+					desc: "Have three or more buffs / バフが3つ以上",
 				},
 			},
 			sell_buildings_after: //建物自動売却を行った後の動作
@@ -753,10 +778,6 @@ CookieAssistant.launch = function()
 							var activate_mode = CookieAssistant.config.particular.sell.activate_mode[i];
 							var after_mode = CookieAssistant.config.particular.sell.after_mode[i];
 							var isSold = CookieAssistant.sellBuildings(i, target, amount, activate_mode, after_mode);
-							if (isSold) //優先度が高いものを売却した場合、以降の優先度の売却はトライせずに処理を終了する
-							{
-								break;
-							}
 						}
 					},
 					CookieAssistant.config.intervals.autoSellBuilding
@@ -875,7 +896,6 @@ CookieAssistant.launch = function()
 		
 		var buffCount = 0;
 		var cliclBuffCount = 0;
-		var isDuaringDevastation = false;
 		for (var i in Game.buffs)
 		{
 			switch(Game.buffs[i].type.name)
@@ -893,24 +913,20 @@ CookieAssistant.launch = function()
 					buffCount++;
 					break;
 				case "devastation":
-					isDuaringDevastation = true;
-					break;
 				case "cursed finger":
 				default:
 					break;
 			}
 		}
-		//ゴジャモックのバフ中なので何もしない
-		if (isDuaringDevastation)
-		{
-			return false;
-		}
+		
 		var isMode0 = activate_mode == 0 && buffCount >= 1;
 		var isMode1 = activate_mode == 1 && buffCount >= 2;
 		var isMode2 = activate_mode == 2 && cliclBuffCount >= 1;
 		var isMode3 = activate_mode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
 		var isMode4 = activate_mode == 4 && CookieAssistant.isAfterSpellcast;
-		if (isMode0 || isMode1 || isMode2 || isMode3 || isMode4)
+		var isMode5 = activate_mode == 5;
+		var isMode6 = activate_mode == 6 && buffCount >= 3;
+		if (isMode0 || isMode1 || isMode2 || isMode3 || isMode4 || isMode5 || isMode6)
 		{
 			if (Game.Objects[objectName].amount < amount)
 			{
@@ -1219,11 +1235,8 @@ CookieAssistant.launch = function()
 		
 		//建物自動売却
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSellBuilding', 'CookieAssistant_autoSellBuilding', 'AutoSell Buildings ON', 'AutoSell Buildings OFF', "CookieAssistant.Toggle");
-				if (CookieAssistant.showAllIntervals)
-				{
 					str += '<label>Interval(ms) : </label>'
 						+ m.InputBox("CookieAssistant_Interval_autoSellBuilding", 40, CookieAssistant.config.intervals.autoSellBuilding, "CookieAssistant.ChangeInterval('autoSellBuilding', this.value)");
-				}
 		str +=	'<div class="listing"><ol style="list-style: inside;list-style-type: decimal;">';
 				for (var i_sellconf = 0; i_sellconf < CookieAssistant.config.particular.sell.isAfterSell.length; i_sellconf++)
 				{
@@ -1243,10 +1256,7 @@ CookieAssistant.launch = function()
 						+ '</a><br /></li>';
 				}
 		str +=	'</ol>';
-		if (CookieAssistant.config.particular.sell.isAfterSell.length < Object.keys(CookieAssistant.modes.sell_buildings).length)
-		{
-			str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.addSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Add Config</a>';
-		}
+		str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.addSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Add Config</a>';
 		if (CookieAssistant.config.particular.sell.isAfterSell.length > 0)
 		{
 			str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.removeSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Remove Last</a>';
@@ -1258,14 +1268,9 @@ CookieAssistant.launch = function()
 			var temple = Game.Objects['Temple'].minigame;
 			if (temple == undefined || !Game.Objects['Temple'].minigameLoaded || !temple.slot.includes(2))
 			{
-				str += "<label><b style='color: #ff0000'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
-				str += "<label><b style='color: #ff0000'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
+				str += "<label><b style='color: #ff3705'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
+				str += "<label><b style='color: #ff3705'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
 			}
-		}
-		if (CookieAssistant.config.particular.sell.activate_mode.filter((x, i, self) => self.indexOf(x) != i).length > 0)
-		{
-			str += "<label><b style='color: #ff0000'>⚠️発動条件が同一の設定があるため、無意味な売却が発生する可能性があります。</b></label><br />";
-			str += "<label><b style='color: #ff0000'>⚠️There are settings with same triggering conditions, so may sell buildings in meaningless.</b></label><br />";
 		}
 
 		//ゴールデンスイッチ自動切換え
