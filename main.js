@@ -37,6 +37,7 @@ CookieAssistant.launch = function()
 				autoSellBuilding : 0,
 				autoToggleGoldenSwitch : 0,
 				autoChocolateEgg : 0,
+				autoHireBrokers : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -56,6 +57,7 @@ CookieAssistant.launch = function()
 				autoHarvestSugarlump : 60000,
 				autoSellBuilding : 500,
 				autoToggleGoldenSwitch : 500,
+				autoHireBrokers : 1000,
 			},
 			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
 			particular:
@@ -862,6 +864,31 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoToggleGoldenSwitch
 				);
 			},
+			autoHireBrokers : () =>
+			{
+				CookieAssistant.intervalHandles.autoHireBrokers = setInterval(
+					() =>
+					{
+						let market = Game.Objects["Bank"].minigame;
+						if (market == undefined || !Game.Objects["Bank"].minigameLoaded)
+						{
+							return;
+						}
+						//Hire
+						if (market.brokers < market.getMaxBrokers() && Game.cookies >= market.getBrokerPrice())
+						{
+							l('bankBrokersBuy').click();
+						}
+						//Upgrade
+						let currentOffice = market.offices[market.officeLevel];
+						if (currentOffice.cost && Game.Objects['Cursor'].amount >= currentOffice.cost[0] && Game.Objects['Cursor'].level >= currentOffice.cost[1])
+						{
+							l('bankOfficeUpgrade').click();
+						}
+					},
+					CookieAssistant.config.intervals.autoHireBrokers
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -1344,6 +1371,15 @@ CookieAssistant.launch = function()
 				+ '</a><br />'
 			+ '</div>'
 			+ '</div>';
+
+		//ブローカー自動雇用
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHireBrokers', 'CookieAssistant_autoHireBrokers', 'AutoHire Brokers ON', 'AutoHire Brokers OFF', "CookieAssistant.Toggle");
+		if (CookieAssistant.showAllIntervals)
+		{
+			str += '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoHireBrokers", 40, CookieAssistant.config.intervals.autoHireBrokers, "CookieAssistant.ChangeInterval('autoHireBrokers', this.value)");
+		}
+		str += '</div>';
 
 		str += "<br />"
 		str += m.Header('Special Assists');
