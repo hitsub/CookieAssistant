@@ -36,6 +36,7 @@ CookieAssistant.launch = function()
 				autoHarvestSugarlump : 0,
 				autoSellBuilding : 0,
 				autoToggleGoldenSwitch : 0,
+				autoChocolateEgg : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -146,6 +147,14 @@ CookieAssistant.launch = function()
 				0
 			);
 		}
+		
+		//ChocolateEgg自動購入
+		CCSE.SpliceCodeIntoFunction(
+			"Game.Ascend",
+			5,
+			"CookieAssistant.OnPreAscend();"
+		);
+
 
 		CookieAssistant.showAllIntervals = false;
 		CookieAssistant.isAfterSpellcast = false;
@@ -560,6 +569,11 @@ CookieAssistant.launch = function()
 								{
 									continue;
 								}
+								//チョコの卵モードがONの時
+								if (CookieAssistant.config.flags.autoChocolateEgg && upgrade.name == "Chocolate egg")
+								{
+									continue;
+								}
 								upgrade.buy(1);
 							}
 						}
@@ -605,7 +619,7 @@ CookieAssistant.launch = function()
 						}
 						else if (Game.season == "easter")
 						{
-							if (easterRate >= 1)
+							if (easterRate >= 1 || (Game.GetHowManyEggs() == Game.easterEggs.length - 1 && !Game.Has("Chocolate egg")))
 							{
 								CookieAssistant.SwitchNextSeason();
 							}
@@ -645,6 +659,10 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoBuyBuildings = setInterval(
 					() =>
 					{
+						if (Game.AscendTimer > 0 || Game.OnAscend)
+						{
+							return;
+						}
 						var amountPerPurchase = CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].amount;
 						for (const objectName in Game.Objects)
 						{
@@ -958,6 +976,11 @@ CookieAssistant.launch = function()
 			(Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length) >= 1,
 		];
 		
+		if (CookieAssistant.config.flags.autoChocolateEgg && !isCompletes[2])
+		{
+			isCompletes[2] = Game.GetHowManyEggs() == Game.easterEggs.length - 1 && !Game.Has("Chocolate egg");
+		}
+
 		var targetSeason = "";
 		
 		for (var i in seasons)
@@ -985,6 +1008,37 @@ CookieAssistant.launch = function()
 				Game.Upgrades[Game.seasons[targetSeason].trigger].buy(1);
 			}
 		}
+	}
+
+	CookieAssistant.OnPreAscend = function()
+	{
+		if (CookieAssistant.config.flags.autoChocolateEgg)
+		{
+			CookieAssistant.BuyChocolateEgg();
+		}
+	}
+
+	CookieAssistant.BuyChocolateEgg = function()
+	{
+		let egg = Game.UpgradesInStore.find(x => x.name == "Chocolate egg");
+		if (egg == undefined)
+		{
+			Game.Notify(CookieAssistant.name, "チョコの卵の購入に失敗しました。<br />Failed to buy Chocolate Egg.");
+			return;
+		}
+		if (Game.dragonLevel >= 8 && !Game.hasAura("Earth Shatterer"))
+		{
+			Game.SetDragonAura(5, 0);
+			Game.ConfirmPrompt();
+		}
+		for (let objectName in Game.Objects) {
+			let building = Game.Objects[objectName];
+			if (building.amount > 0)
+			{
+				building.sell(building.amount);
+			}
+		}
+		egg.buy();
 	}
 
 	//コンフィグのチェック
@@ -1288,6 +1342,13 @@ CookieAssistant.launch = function()
 			+ '</div>';
 
 		str += "<br />"
+		str += m.Header('Special Assists');
+
+		//ChocolateEgg
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoChocolateEgg', 'CookieAssistant_autoChocolateEgg', 'Auto Buy ' + loc("[Upgrade name 227]Chocolate egg") + ' ON', 'AutoToggle ' + loc("[Upgrade name 227]Chocolate egg") + ' OFF', "CookieAssistant.Toggle")
+			+ '</div>';
+
+		str += "<br />"
 		str += m.Header('Misc');
 		str += '<div class="listing">'
 				+ m.ActionButton("CookieAssistant.showAllIntervals = !CookieAssistant.showAllIntervals; Game.UpdateMenu();", (CookieAssistant.showAllIntervals ? 'Hide' : 'Show All') + ' Interval Settings')
@@ -1326,6 +1387,10 @@ CookieAssistant.launch = function()
 	{
 		for (const [key, isClick] of Object.entries(CookieAssistant.config.flags))
 		{
+			if (CookieAssistant.actions[key] == undefined)
+			{
+				continue;
+			}
 			if (isClick)
 			{
 				if (CookieAssistant.intervalHandles[key] == null)
