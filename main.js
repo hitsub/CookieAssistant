@@ -872,6 +872,10 @@ CookieAssistant.launch = function()
 	{
 		var objectName = Game.ObjectsById[target].name;
 		var amount = parseInt(amount);
+		if (amount <= 0)
+		{
+			return;
+		}
 		if (CookieAssistant.config.particular.sell.isAfterSell[index])
 		{
 			if (after_mode == 2)//Do nothing
