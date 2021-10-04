@@ -717,8 +717,10 @@ CookieAssistant.launch = function()
 								Game.UpgradeDragon();
 								if (Game.dragonLevel == Game.dragonLevels.length - 1)
 								{
-									Game.dragonAura = CookieAssistant.config.particular.dragon.aura1;
-									Game.dragonAura2 = CookieAssistant.config.particular.dragon.aura2;
+									Game.SetDragonAura(CookieAssistant.config.particular.dragon.aura1, 0);
+									Game.ConfirmPrompt();
+									Game.SetDragonAura(CookieAssistant.config.particular.dragon.aura2, 1);
+									Game.ConfirmPrompt();
 								}
 							}
 							//なでる
