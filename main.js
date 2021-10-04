@@ -115,6 +115,10 @@ CookieAssistant.launch = function()
 					enable: 0,
 					disable: 0,
 				},
+				season:
+				{
+					afterComplete: 0, //シーズン全部終わった後どうするか
+				},
 			}
 		};
 
@@ -355,7 +359,35 @@ CookieAssistant.launch = function()
 				{
 					desc: "No click buffs / クリックバフが無いとき"
 				},
-			}
+			},
+			season:
+			{
+				0:
+				{
+					desc: "None / なし",
+					season: "",
+				},
+				1:
+				{
+					desc: "Christmas / クリスマス",
+					season: "christmas",
+				},
+				2:
+				{
+					desc: "Easter / イースター",
+					season: "easter",
+				},
+				3:
+				{
+					desc: "Halloween / ハロウィン",
+					season: "halloween",
+				},
+				4:
+				{
+					desc: "Valentines / バレンタイン",
+					season: "valentines",
+				},
+			},
 		}
 
 		CookieAssistant.actions =
@@ -999,8 +1031,8 @@ CookieAssistant.launch = function()
 
 	CookieAssistant.SwitchNextSeason = function()
 	{
-		var seasons = ["valentines", "christmas", "easter", "halloween"];
-		var isCompletes = [
+		let seasons = ["valentines", "christmas", "easter", "halloween"];
+		let isCompletes = [
 			(Game.GetHowManyHeartDrops() / Game.heartDrops.length) >= 1,
 			((Game.GetHowManySantaDrops() / Game.santaDrops.length) >= 1) && ((Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length) >= 1) && Game.santaLevel >= 14,
 			(Game.GetHowManyEggs() / Game.easterEggs.length) >= 1,
@@ -1012,9 +1044,10 @@ CookieAssistant.launch = function()
 			isCompletes[2] = Game.GetHowManyEggs() == Game.easterEggs.length - 1 && !Game.Has("Chocolate egg");
 		}
 
-		var targetSeason = "";
+		let targetSeason = "";
+		let afterCompleteSeason = CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].season;
 		
-		for (var i in seasons)
+		for (let i in seasons)
 		{
 			if (!isCompletes[i])
 			{
@@ -1022,19 +1055,19 @@ CookieAssistant.launch = function()
 				break;
 			}
 		}
-		//全シーズンのアップグレードが完了していて現在どこかのシーズンになっている時、現在のシーズンを解除する
+		if (targetSeason == "" && afterCompleteSeason != "")
+		{
+			targetSeason = afterCompleteSeason;
+		}
+		//全シーズンのアップグレードが完了していて現在どこかのシーズンになっている
 		if (Game.season != "" && targetSeason == "")
 		{
-			targetSeason = Game.season;
+			//シーズン終了
+			Game.seasonT = -1;
 		}
-		if (targetSeason != "")
+		if (targetSeason != "" && targetSeason != Game.season)
 		{
-			if (targetSeason == Game.season)
-			{
-				//値の直接書き換えになってしまうが、内部のシーズンキャンセルの挙動もこれなので許してくれ
-				Game.seasonT = -1;
-			}
-			else if (Game.UpgradesInStore.indexOf(Game.Upgrades[Game.seasons[targetSeason].trigger]) != -1)
+			if (Game.UpgradesInStore.indexOf(Game.Upgrades[Game.seasons[targetSeason].trigger]) != -1)
 			{
 				Game.Upgrades[Game.seasons[targetSeason].trigger].buy(1);
 			}
@@ -1262,6 +1295,12 @@ CookieAssistant.launch = function()
 					str +='<label>Interval(ms) : </label>'
 						+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)");
 				}
+		str +=	'<div class="listing">'
+				+ '<label>Switch to after complete / 完了後の切り替え先 : </label>'
+				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.season.afterComplete++; if(CookieAssistant.config.particular.season.afterComplete >= Object.keys(CookieAssistant.modes.season).length){CookieAssistant.config.particular.season.afterComplete = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+						+ CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].desc
+				+ '</a><br />'
+				+ '</div>'
 		str +=	'<div class="listing">'
 					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。</label><br />'
 					+ '<label>Automatically switch to seasons in which the upgrade is still remained. </label><br />'
