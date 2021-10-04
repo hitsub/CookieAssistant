@@ -5,7 +5,7 @@ Does not support direct rewriting of values or giving items.
 Steam版クッキークリッカーのアシストツールです。  
 値の直接書き換えやアイテムの付与といったことには対応しません。
 
-![0 6 0-english](https://user-images.githubusercontent.com/5540614/134808899-4569b086-8a26-42fa-9bbd-bdf5d6d9ddce.png)
+![0 7 0-english](https://user-images.githubusercontent.com/5540614/135812016-51f74abb-c217-4d91-bceb-46658dd390fa.png)
 
 # 機能 / Features
 
@@ -32,6 +32,13 @@ Steam版クッキークリッカーのアシストツールです。
     - Spirit sets are a regular procedure and will not be performed during the cool time.
   - Auto train dragon and set auras
     - Auras are set only when the dragon is fully grown.
+    - This feature automatically will pet the dragon to get upgrades.
+  - Auto-toggle Golden Switch feature
+  - Auto hire brokers feature
+    - Office upgrades are also automatic.
+  - Auto buy chocolate egg feature
+    - Just before ascend, set the aura "Earth Shatterer", sell all buildings, and then buy Chocolate egg.
+    - When enabled, auto-switch seasons and auto-buy upgrades will ignore the chocolate egg.
   - Setting the interval for the above features
   - Check update this mod
 - JP
@@ -57,6 +64,13 @@ Steam版クッキークリッカーのアシストツールです。
     - 精霊のセットは正規の手順のものであり、クールタイム中であれば実行されません
   - ドラゴンの自動育成 + オーラの自動セット
     - オーラのセットはドラゴンの育成が最大まで完了したときにのみ行われます
+    - この機能はドラゴンを自動でなでて、アップグレードを取得します
+  - 黄金スイッチの自動切換え機能
+  - ブローカーの自動雇用機能
+    - オフィスのアップグレードも自動で行われます
+  - チョコの卵の自動購入機能
+    - 転生直前にオーラ「大地を砕く者」をセットし、全建物を売却してから購入します
+    - この機能が有効のとき、シーズン自動切換やアップグレード自動購入はチョコの卵を無視するようになります
   - これらの機能の実行間隔の設定
   - このMODのアプデチェック
 
