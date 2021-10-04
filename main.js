@@ -36,6 +36,8 @@ CookieAssistant.launch = function()
 				autoHarvestSugarlump : 0,
 				autoSellBuilding : 0,
 				autoToggleGoldenSwitch : 0,
+				autoChocolateEgg : 0,
+				autoHireBrokers : 0,
 			},
 			//各機能の実行間隔
 			intervals:
@@ -55,6 +57,7 @@ CookieAssistant.launch = function()
 				autoHarvestSugarlump : 60000,
 				autoSellBuilding : 500,
 				autoToggleGoldenSwitch : 500,
+				autoHireBrokers : 1000,
 			},
 			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
 			particular:
@@ -112,6 +115,10 @@ CookieAssistant.launch = function()
 					enable: 0,
 					disable: 0,
 				},
+				season:
+				{
+					afterComplete: 0, //シーズン全部終わった後どうするか
+				},
 			}
 		};
 
@@ -124,11 +131,36 @@ CookieAssistant.launch = function()
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
 
+		//大クッキーのSEミュート
         CCSE.SpliceCodeIntoFunction(
 			"Game.playCookieClickSound",
 			2,
 			"if (CookieAssistant.config.particular.bigCookie.isMute) { return; }"
 		);
+
+		//建物売買のSEミュート
+		for (const objectName of Object.keys(Game.Objects)) {
+			CCSE.ReplaceCodeIntoFunction(
+				"Game.Objects['" + objectName + "'].sell",
+				"PlaySound('snd/sell'+choose([1,2,3,4])+'.mp3',0.75);",
+				"if (!CookieAssistant.config.flags.autoSellBuilding) {PlaySound('snd/sell'+choose([1,2,3,4])+'.mp3',0.75);}",
+				0
+			);
+			CCSE.ReplaceCodeIntoFunction(
+				"Game.Objects['" + objectName + "'].buy",
+				"PlaySound('snd/buy'+choose([1,2,3,4])+'.mp3',0.75);",
+				"if (!CookieAssistant.config.flags.autoSellBuilding) {PlaySound('snd/buy'+choose([1,2,3,4])+'.mp3',0.75);}",
+				0
+			);
+		}
+		
+		//ChocolateEgg自動購入
+		CCSE.SpliceCodeIntoFunction(
+			"Game.Ascend",
+			5,
+			"CookieAssistant.OnPreAscend();"
+		);
+
 
 		CookieAssistant.showAllIntervals = false;
 		CookieAssistant.isAfterSpellcast = false;
@@ -244,6 +276,14 @@ CookieAssistant.launch = function()
 				{
 					desc: "After auto-spellcast / 自動詠唱の後",
 				},
+				5:
+				{
+					desc: "Always / 常に"
+				},
+				6:
+				{
+					desc: "Have three or more buffs / バフが3つ以上",
+				},
 			},
 			sell_buildings_after: //建物自動売却を行った後の動作
 			{
@@ -319,7 +359,35 @@ CookieAssistant.launch = function()
 				{
 					desc: "No click buffs / クリックバフが無いとき"
 				},
-			}
+			},
+			season:
+			{
+				0:
+				{
+					desc: "None / なし",
+					season: "",
+				},
+				1:
+				{
+					desc: "Christmas / クリスマス",
+					season: "christmas",
+				},
+				2:
+				{
+					desc: "Easter / イースター",
+					season: "easter",
+				},
+				3:
+				{
+					desc: "Halloween / ハロウィン",
+					season: "halloween",
+				},
+				4:
+				{
+					desc: "Valentines / バレンタイン",
+					season: "valentines",
+				},
+			},
 		}
 
 		CookieAssistant.actions =
@@ -383,17 +451,10 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickGoldenCookie = setInterval(
 					() =>
 					{
-						for (var i in Game.shimmers)
-						{
-							if(Game.shimmers[i].type == "golden")
-							{
-								if (CookieAssistant.config.particular.golden.mode == 1 && Game.shimmers[i].wrath != 0)
-								{
-									continue;
-								}
-								Game.shimmers[i].pop();
-							}
-						}
+						Game.shimmers
+							.filter(shimmer => shimmer.type == "golden")
+							.filter(shimmer => !(CookieAssistant.config.particular.golden.mode == 1 &&shimmer.wrath != 0))
+							.forEach(shimmer => shimmer.pop())
 					},
 					CookieAssistant.config.intervals.autoClickGoldenCookie
 				)
@@ -403,13 +464,9 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickReindeer = setInterval(
 					() =>
 					{
-						for (var i in Game.shimmers)
-						{
-							if(Game.shimmers[i].type == "reindeer")
-							{
-								Game.shimmers[i].pop();
-							}
-						}
+						Game.shimmers
+							.filter(shimmer => shimmer.type == "reindeer")
+							.forEach(shimmer => shimmer.pop())
 					},
 					CookieAssistant.config.intervals.autoClickReindeer
 				)
@@ -546,6 +603,11 @@ CookieAssistant.launch = function()
 								{
 									continue;
 								}
+								//チョコの卵モードがONの時
+								if (CookieAssistant.config.flags.autoChocolateEgg && upgrade.name == "Chocolate egg")
+								{
+									continue;
+								}
 								upgrade.buy(1);
 							}
 						}
@@ -564,20 +626,6 @@ CookieAssistant.launch = function()
 						var easterRate = Game.GetHowManyEggs() / Game.easterEggs.length;
 						var valentinesRate = Game.GetHowManyHeartDrops() / Game.heartDrops.length;
 
-						// Game.Upgrades['Festive biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.santaDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManySantaDrops()+'/'+Game.santaDrops.length+'</b> of Santa\'s gifts.'):loc("Seasonal cookies purchased: <b>%1</b>.",Game.GetHowManySantaDrops()+'/'+Game.santaDrops.length))+'<div class="line"></div>'+Game.listTinyOwnedUpgrades(Game.reindeerDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyReindeerDrops()+'/'+Game.reindeerDrops.length+'</b> reindeer cookies.'):loc("Reindeer cookies purchased: <b>%1</b>.",Game.GetHowManyReindeerDrops()+'/'+Game.reindeerDrops.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
-						// Game.Upgrades['Bunny biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.easterEggs)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyEggs()+'/'+Game.easterEggs.length+'</b> eggs.'):loc("Eggs purchased: <b>%1</b>.",Game.GetHowManyEggs()+'/'+Game.easterEggs.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
-						// Game.Upgrades['Ghostly biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.halloweenDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyHalloweenDrops()+'/'+Game.halloweenDrops.length+'</b> halloween cookies.'):loc("Seasonal cookies purchased: <b>%1</b>.",Game.GetHowManyHalloweenDrops()+'/'+Game.halloweenDrops.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
-						// Game.Upgrades['Lovesick biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.listTinyOwnedUpgrades(Game.heartDrops)+'<br><br>'+(EN?('You\'ve purchased <b>'+Game.GetHowManyHeartDrops()+'/'+Game.heartDrops.length+'</b> heart biscuits.'):loc("Seasonal cookies purchased: <b>%1</b>.",Game.GetHowManyHeartDrops()+'/'+Game.heartDrops.length))+'<div class="line"></div>'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
-						// Game.Upgrades['Fool\'s biscuit'].descFunc=function(){return '<div style="text-align:center;">'+Game.saySeasonSwitchUses()+'<div class="line"></div></div>'+this.ddesc;};
-
-						// Game.seasons={
-						// 	'christmas':{name:'Christmas',start:'Christmas season has started!',over:'Christmas season is over.',trigger:'Festive biscuit'},
-						// 	'valentines':{name:'Valentine\'s day',start:'Valentine\'s day has started!',over:'Valentine\'s day is over.',trigger:'Lovesick biscuit'},
-						// 	'fools':{name:'Business day',start:'Business day has started!',over:'Business day is over.',trigger:'Fool\'s biscuit'},
-						// 	'easter':{name:'Easter',start:'Easter season has started!',over:'Easter season is over.',trigger:'Bunny biscuit'},
-						// 	'halloween':{name:'Halloween',start:'Halloween has started!',over:'Halloween is over.',trigger:'Ghostly biscuit'}
-						// };
-
 						if (Game.season == "")
 						{
 							CookieAssistant.SwitchNextSeason();
@@ -586,7 +634,6 @@ CookieAssistant.launch = function()
 						{
 							if (valentinesRate >= 1)
 							{
-								// console.log("Complete Valentines");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -594,19 +641,20 @@ CookieAssistant.launch = function()
 						{
 							if (winterSantaRate < 1 || Game.santaLevel < 14)
 							{
+								Game.specialTab = "santa";
+								Game.ToggleSpecialMenu(true);
 								Game.UpgradeSanta();
+								Game.ToggleSpecialMenu(false);
 							}
 							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
 							{
-								// console.log("Complete Christmas");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
 						else if (Game.season == "easter")
 						{
-							if (easterRate >= 1)
+							if (easterRate >= 1 || (Game.GetHowManyEggs() == Game.easterEggs.length - 1 && !Game.Has("Chocolate egg")))
 							{
-								// console.log("Complete Easter");
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
@@ -622,18 +670,15 @@ CookieAssistant.launch = function()
 							//エルダー宣誓の時間が残っている場合はエルダー誓約を発動する(エルダー宣誓の時間リセットのため)
 							if (Game.pledgeT >= 1 && Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
 							{
-								// console.log("Buy Elder Covenant");
 								Game.Upgrades["Elder Covenant"].buy();
 							}
 							//エルダー誓約の撤回が出来る場合はする（Wrinklerをスポーンさせる必要があるため）
 							if (Game.UpgradesInStore.indexOf(Game.Upgrades["Revoke Elder Covenant"]) != -1)
 							{
-								// console.log("Buy Revoke Elder Covenant");
 								Game.Upgrades["Revoke Elder Covenant"].buy();
 							}
 							if (halloweenRate >= 1)
 							{
-								// console.log("Complete Halloween");
 								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
 								Game.Upgrades["Elder Covenant"].buy(1);
 								CookieAssistant.SwitchNextSeason();
@@ -648,8 +693,11 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoBuyBuildings = setInterval(
 					() =>
 					{
+						if (Game.AscendTimer > 0 || Game.OnAscend)
+						{
+							return;
+						}
 						var amountPerPurchase = CookieAssistant.modes.buildings[CookieAssistant.config.particular.buildings.mode].amount;
-						// console.log(l('products').innerHTML);
 						for (const objectName in Game.Objects)
 						{
 							var amount = Game.Objects[objectName].amount % amountPerPurchase == 0 ? amountPerPurchase : amountPerPurchase - Game.Objects[objectName].amount % amountPerPurchase;
@@ -682,14 +730,37 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoTrainDragon = setInterval(
 					() =>
 					{
-						if (Game.dragonLevel < Game.dragonLevels.length - 1 && Game.dragonLevels[Game.dragonLevel].cost())
+						Math.seedrandom(Game.seed+'/dragonTime');
+						let drops = ['Dragon scale', 'Dragon claw', 'Dragon fang', 'Dragon teddy bear'];
+						drops=shuffle(drops);
+						Math.seedrandom();
+						let currentDrop = drops[Math.floor((new Date().getMinutes() / 60) * drops.length)];
+
+						let canTrain = Game.dragonLevel < Game.dragonLevels.length - 1 && Game.dragonLevels[Game.dragonLevel].cost();
+						let canPet = Game.dragonLevel >= 8 && Game.Has("Pet the dragon") && !Game.Has(currentDrop) && !Game.HasUnlocked(currentDrop);
+
+						if (canTrain || canPet)
 						{
-							Game.UpgradeDragon();
-							if (Game.dragonLevel == Game.dragonLevels.length - 1)
+							Game.specialTab = "dragon";
+							Game.ToggleSpecialMenu(true);
+							//育成
+							if (canTrain)
 							{
-								Game.dragonAura = CookieAssistant.config.particular.dragon.aura1;
-								Game.dragonAura2 = CookieAssistant.config.particular.dragon.aura2;
+								Game.UpgradeDragon();
+								if (Game.dragonLevel == Game.dragonLevels.length - 1)
+								{
+									Game.SetDragonAura(CookieAssistant.config.particular.dragon.aura1, 0);
+									Game.ConfirmPrompt();
+									Game.SetDragonAura(CookieAssistant.config.particular.dragon.aura2, 1);
+									Game.ConfirmPrompt();
+								}
 							}
+							//なでる
+							if (canPet)
+							{
+								Game.ClickSpecialPic();
+							}
+							Game.ToggleSpecialMenu(false);
 						}
 					},
 					CookieAssistant.config.intervals.autoTrainDragon
@@ -761,10 +832,6 @@ CookieAssistant.launch = function()
 							var activate_mode = CookieAssistant.config.particular.sell.activate_mode[i];
 							var after_mode = CookieAssistant.config.particular.sell.after_mode[i];
 							var isSold = CookieAssistant.sellBuildings(i, target, amount, activate_mode, after_mode);
-							if (isSold) //優先度が高いものを売却した場合、以降の優先度の売却はトライせずに処理を終了する
-							{
-								break;
-							}
 						}
 					},
 					CookieAssistant.config.intervals.autoSellBuilding
@@ -811,8 +878,6 @@ CookieAssistant.launch = function()
 							let isMode2 = enableMode == 2 && cliclBuffCount >= 1;
 							let isMode3 = enableMode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
 
-							console.log("OFF 0:"+isMode0 + ", 1:" + isMode1 + ", 2:"+isMode2 + ",3:"+isMode3);
-
 							if (isMode0 || isMode1 || isMode2 || isMode3)
 							{
 								off.buy();
@@ -833,6 +898,31 @@ CookieAssistant.launch = function()
 					CookieAssistant.config.intervals.autoToggleGoldenSwitch
 				);
 			},
+			autoHireBrokers : () =>
+			{
+				CookieAssistant.intervalHandles.autoHireBrokers = setInterval(
+					() =>
+					{
+						let market = Game.Objects["Bank"].minigame;
+						if (market == undefined || !Game.Objects["Bank"].minigameLoaded)
+						{
+							return;
+						}
+						//Hire
+						if (market.brokers < market.getMaxBrokers() && Game.cookies >= market.getBrokerPrice())
+						{
+							l('bankBrokersBuy').click();
+						}
+						//Upgrade
+						let currentOffice = market.offices[market.officeLevel];
+						if (currentOffice.cost && Game.Objects['Cursor'].amount >= currentOffice.cost[0] && Game.Objects['Cursor'].level >= currentOffice.cost[1])
+						{
+							l('bankOfficeUpgrade').click();
+						}
+					},
+					CookieAssistant.config.intervals.autoHireBrokers
+				);
+			},
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
@@ -843,6 +933,10 @@ CookieAssistant.launch = function()
 	{
 		var objectName = Game.ObjectsById[target].name;
 		var amount = parseInt(amount);
+		if (amount <= 0)
+		{
+			return;
+		}
 		if (CookieAssistant.config.particular.sell.isAfterSell[index])
 		{
 			if (after_mode == 2)//Do nothing
@@ -876,7 +970,6 @@ CookieAssistant.launch = function()
 			}
 			else
 			{
-				console.log("Game.cookies :" + Game.cookies + ", Requirement : " + Game.Objects[objectName].getSumPrice(amount));
 				Game.Notify(CookieAssistant.name, "クッキーが足りず建物を買い戻せませんでした。<br />Not have enough cookies to buy back");
 			}
 			CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
@@ -886,7 +979,6 @@ CookieAssistant.launch = function()
 		
 		var buffCount = 0;
 		var cliclBuffCount = 0;
-		var isDuaringDevastation = false;
 		for (var i in Game.buffs)
 		{
 			switch(Game.buffs[i].type.name)
@@ -904,24 +996,20 @@ CookieAssistant.launch = function()
 					buffCount++;
 					break;
 				case "devastation":
-					isDuaringDevastation = true;
-					break;
 				case "cursed finger":
 				default:
 					break;
 			}
 		}
-		//ゴジャモックのバフ中なので何もしない
-		if (isDuaringDevastation)
-		{
-			return false;
-		}
+		
 		var isMode0 = activate_mode == 0 && buffCount >= 1;
 		var isMode1 = activate_mode == 1 && buffCount >= 2;
 		var isMode2 = activate_mode == 2 && cliclBuffCount >= 1;
 		var isMode3 = activate_mode == 3 && buffCount >= 2 && cliclBuffCount >= 1;
 		var isMode4 = activate_mode == 4 && CookieAssistant.isAfterSpellcast;
-		if (isMode0 || isMode1 || isMode2 || isMode3 || isMode4)
+		var isMode5 = activate_mode == 5;
+		var isMode6 = activate_mode == 6 && buffCount >= 3;
+		if (isMode0 || isMode1 || isMode2 || isMode3 || isMode4 || isMode5 || isMode6)
 		{
 			if (Game.Objects[objectName].amount < amount)
 			{
@@ -945,19 +1033,23 @@ CookieAssistant.launch = function()
 
 	CookieAssistant.SwitchNextSeason = function()
 	{
-		var seasons = ["valentines", "christmas", "easter", "halloween"];
-		var isCompletes = [
+		let seasons = ["valentines", "christmas", "easter", "halloween"];
+		let isCompletes = [
 			(Game.GetHowManyHeartDrops() / Game.heartDrops.length) >= 1,
 			((Game.GetHowManySantaDrops() / Game.santaDrops.length) >= 1) && ((Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length) >= 1) && Game.santaLevel >= 14,
 			(Game.GetHowManyEggs() / Game.easterEggs.length) >= 1,
 			(Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length) >= 1,
 		];
 		
-		var targetSeason = "";
-		// console.log("シーズン獲得状況 : ");
-		// console.log(isCompletes);
+		if (CookieAssistant.config.flags.autoChocolateEgg && !isCompletes[2])
+		{
+			isCompletes[2] = Game.GetHowManyEggs() == Game.easterEggs.length - 1 && !Game.Has("Chocolate egg");
+		}
+
+		let targetSeason = "";
+		let afterCompleteSeason = CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].season;
 		
-		for (var i in seasons)
+		for (let i in seasons)
 		{
 			if (!isCompletes[i])
 			{
@@ -965,24 +1057,54 @@ CookieAssistant.launch = function()
 				break;
 			}
 		}
-		//全シーズンのアップグレードが完了していて現在どこかのシーズンになっている時、現在のシーズンを解除する
+		if (targetSeason == "" && afterCompleteSeason != "")
+		{
+			targetSeason = afterCompleteSeason;
+		}
+		//全シーズンのアップグレードが完了していて現在どこかのシーズンになっている
 		if (Game.season != "" && targetSeason == "")
 		{
-			targetSeason = Game.season;
+			//シーズン終了
+			Game.seasonT = -1;
 		}
-		if (targetSeason != "")
+		if (targetSeason != "" && targetSeason != Game.season)
 		{
-			// console.log("ChangeSeason : " + targetSeason);
-			if (targetSeason == Game.season)
-			{
-				//値の直接書き換えになってしまうが、内部のシーズンキャンセルの挙動もこれなので許してくれ
-				Game.seasonT = -1;
-			}
-			else if (Game.UpgradesInStore.indexOf(Game.Upgrades[Game.seasons[targetSeason].trigger]) != -1)
+			if (Game.UpgradesInStore.indexOf(Game.Upgrades[Game.seasons[targetSeason].trigger]) != -1)
 			{
 				Game.Upgrades[Game.seasons[targetSeason].trigger].buy(1);
 			}
 		}
+	}
+
+	CookieAssistant.OnPreAscend = function()
+	{
+		if (CookieAssistant.config.flags.autoChocolateEgg)
+		{
+			CookieAssistant.BuyChocolateEgg();
+		}
+	}
+
+	CookieAssistant.BuyChocolateEgg = function()
+	{
+		let egg = Game.UpgradesInStore.find(x => x.name == "Chocolate egg");
+		if (egg == undefined)
+		{
+			Game.Notify(CookieAssistant.name, "チョコの卵の購入に失敗しました。<br />Failed to buy Chocolate Egg.");
+			return;
+		}
+		if (Game.dragonLevel >= 8 && !Game.hasAura("Earth Shatterer"))
+		{
+			Game.SetDragonAura(5, 0);
+			Game.ConfirmPrompt();
+		}
+		for (let objectName in Game.Objects) {
+			let building = Game.Objects[objectName];
+			if (building.amount > 0)
+			{
+				building.sell(building.amount);
+			}
+		}
+		egg.buy();
 	}
 
 	//コンフィグのチェック
@@ -1176,6 +1298,12 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)");
 				}
 		str +=	'<div class="listing">'
+				+ '<label>Switch to after complete / 完了後の切り替え先 : </label>'
+				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.season.afterComplete++; if(CookieAssistant.config.particular.season.afterComplete >= Object.keys(CookieAssistant.modes.season).length){CookieAssistant.config.particular.season.afterComplete = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
+						+ CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].desc
+				+ '</a><br />'
+				+ '</div>'
+		str +=	'<div class="listing">'
 					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。</label><br />'
 					+ '<label>Automatically switch to seasons in which the upgrade is still remained. </label><br />'
 				+ '</div>'
@@ -1233,11 +1361,8 @@ CookieAssistant.launch = function()
 		
 		//建物自動売却
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSellBuilding', 'CookieAssistant_autoSellBuilding', 'AutoSell Buildings ON', 'AutoSell Buildings OFF', "CookieAssistant.Toggle");
-				if (CookieAssistant.showAllIntervals)
-				{
 					str += '<label>Interval(ms) : </label>'
 						+ m.InputBox("CookieAssistant_Interval_autoSellBuilding", 40, CookieAssistant.config.intervals.autoSellBuilding, "CookieAssistant.ChangeInterval('autoSellBuilding', this.value)");
-				}
 		str +=	'<div class="listing"><ol style="list-style: inside;list-style-type: decimal;">';
 				for (var i_sellconf = 0; i_sellconf < CookieAssistant.config.particular.sell.isAfterSell.length; i_sellconf++)
 				{
@@ -1257,10 +1382,7 @@ CookieAssistant.launch = function()
 						+ '</a><br /></li>';
 				}
 		str +=	'</ol>';
-		if (CookieAssistant.config.particular.sell.isAfterSell.length < Object.keys(CookieAssistant.modes.sell_buildings).length)
-		{
-			str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.addSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Add Config</a>';
-		}
+		str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.addSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Add Config</a>';
 		if (CookieAssistant.config.particular.sell.isAfterSell.length > 0)
 		{
 			str +=	'<a class="option" ' + Game.clickStr + '="CookieAssistant.removeSellConfig(); Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">Remove Last</a>';
@@ -1272,14 +1394,9 @@ CookieAssistant.launch = function()
 			var temple = Game.Objects['Temple'].minigame;
 			if (temple == undefined || !Game.Objects['Temple'].minigameLoaded || !temple.slot.includes(2))
 			{
-				str += "<label><b style='color: #ff0000'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
-				str += "<label><b style='color: #ff0000'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
+				str += "<label><b style='color: #ff3705'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
+				str += "<label><b style='color: #ff3705'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
 			}
-		}
-		if (CookieAssistant.config.particular.sell.activate_mode.filter((x, i, self) => self.indexOf(x) != i).length > 0)
-		{
-			str += "<label><b style='color: #ff0000'>⚠️発動条件が同一の設定があるため、無意味な売却が発生する可能性があります。</b></label><br />";
-			str += "<label><b style='color: #ff0000'>⚠️There are settings with same triggering conditions, so may sell buildings in meaningless.</b></label><br />";
 		}
 
 		//ゴールデンスイッチ自動切換え
@@ -1294,6 +1411,22 @@ CookieAssistant.launch = function()
 						+ CookieAssistant.modes.goldenSwitch_disable[CookieAssistant.config.particular.goldenSwitch.disable].desc
 				+ '</a><br />'
 			+ '</div>'
+			+ '</div>';
+
+		//ブローカー自動雇用
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHireBrokers', 'CookieAssistant_autoHireBrokers', 'AutoHire Brokers ON', 'AutoHire Brokers OFF', "CookieAssistant.Toggle");
+		if (CookieAssistant.showAllIntervals)
+		{
+			str += '<label>Interval(ms) : </label>'
+				+ m.InputBox("CookieAssistant_Interval_autoHireBrokers", 40, CookieAssistant.config.intervals.autoHireBrokers, "CookieAssistant.ChangeInterval('autoHireBrokers', this.value)");
+		}
+		str += '</div>';
+
+		str += "<br />"
+		str += m.Header('Special Assists');
+
+		//ChocolateEgg
+		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoChocolateEgg', 'CookieAssistant_autoChocolateEgg', 'Auto Buy ' + loc("[Upgrade name 227]Chocolate egg") + ' ON', 'AutoToggle ' + loc("[Upgrade name 227]Chocolate egg") + ' OFF', "CookieAssistant.Toggle")
 			+ '</div>';
 
 		str += "<br />"
@@ -1335,6 +1468,10 @@ CookieAssistant.launch = function()
 	{
 		for (const [key, isClick] of Object.entries(CookieAssistant.config.flags))
 		{
+			if (CookieAssistant.actions[key] == undefined)
+			{
+				continue;
+			}
 			if (isClick)
 			{
 				if (CookieAssistant.intervalHandles[key] == null)
