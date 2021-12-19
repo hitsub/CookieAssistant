@@ -387,6 +387,11 @@ CookieAssistant.launch = function()
 					desc: "Valentines / バレンタイン",
 					season: "valentines",
 				},
+				5:
+				{
+					desc: "Business day / ビジネスデー",
+					season: "fools",
+				},
 			},
 		}
 
