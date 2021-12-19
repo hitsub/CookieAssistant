@@ -680,7 +680,10 @@ CookieAssistant.launch = function()
 							if (halloweenRate >= 1)
 							{
 								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
-								Game.Upgrades["Elder Covenant"].buy(1);
+								if (Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
+								{
+									Game.Upgrades["Elder Covenant"].buy(1);
+								}
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
