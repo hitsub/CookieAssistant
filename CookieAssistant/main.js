@@ -9,7 +9,7 @@ if(typeof CCSE == 'undefined')
 
 CookieAssistant.name = 'Cookie Assistant';
 CookieAssistant.version = '0.7.0';
-CookieAssistant.GameVersion = '2.042';
+CookieAssistant.GameVersion = '2.043';
 
 
 CookieAssistant.launch = function()
@@ -387,6 +387,11 @@ CookieAssistant.launch = function()
 					desc: "Valentines / バレンタイン",
 					season: "valentines",
 				},
+				5:
+				{
+					desc: "Business day / ビジネスデー",
+					season: "fools",
+				},
 			},
 		}
 
@@ -680,7 +685,10 @@ CookieAssistant.launch = function()
 							if (halloweenRate >= 1)
 							{
 								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
-								Game.Upgrades["Elder Covenant"].buy(1);
+								if (Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
+								{
+									Game.Upgrades["Elder Covenant"].buy(1);
+								}
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
