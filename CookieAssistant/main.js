@@ -1544,7 +1544,7 @@ CookieAssistant.launch = function()
 			return;
 		}
 
-		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">アップデートがあります<br>There will be an update.</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">ここからダウンロードしてください。<br>Download Here</a>`)
+		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">` + loc("There will be an update.")  + `</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">` + loc("Download Here.") + `</a>`)
 		Game.UpdateMenu();
 	}
 
