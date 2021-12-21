@@ -1018,7 +1018,10 @@ CookieAssistant.launch = function()
 			}
 			Game.Objects[objectName].sell(amount);
 			CookieAssistant.config.particular.sell.isAfterSell[index] = 1;
-			CookieAssistant.isAfterSpellcast = false;
+			if(isMode4)
+			{
+				CookieAssistant.isAfterSpellcast = false;
+			}
 			return true;
 		}
 	}
