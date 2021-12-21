@@ -7,6 +7,9 @@
 	"GameVersion": 2.04,
 	"Date": "08/09/2021",
 	"Dependencies": ["CCSE"],
+	"LanguagePacks": [
+		"lang/ja.js"
+	],
 	"Disabled": 1,
 	"AllowSteamAchievs": 1
 }
