@@ -55,7 +55,7 @@ CookieAssistant.launch = function()
 				autoTrainDragon : 1000,
 				autoSetSpirits : 10000,
 				autoHarvestSugarlump : 60000,
-				autoSellBuilding : 500,
+				autoSellBuilding : 5000,
 				autoToggleGoldenSwitch : 500,
 				autoHireBrokers : 1000,
 			},
