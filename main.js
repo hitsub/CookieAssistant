@@ -625,11 +625,18 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoSwitchSeason = setInterval(
 					() =>
 					{
-						var winterSantaRate = Game.GetHowManySantaDrops() / Game.santaDrops.length;
-						var winterReindeerRate = Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length;
-						var halloweenRate = Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length;
-						var easterRate = Game.GetHowManyEggs() / Game.easterEggs.length;
-						var valentinesRate = Game.GetHowManyHeartDrops() / Game.heartDrops.length;
+						let isCompletes = [
+							(Game.GetHowManyHeartDrops() / Game.heartDrops.length) >= 1,
+							((Game.GetHowManySantaDrops() / Game.santaDrops.length) >= 1) && ((Game.GetHowManyReindeerDrops() / Game.reindeerDrops.length) >= 1) && Game.santaLevel >= 14,
+							CookieAssistant.config.flags.autoChocolateEgg ? (Game.GetHowManyEggs() / Game.easterEggs.length) >= 1 : (Game.GetHowManyEggs() / Game.easterEggs.length - 1) >= 1 && !Game.Has("Chocolate egg"),
+							(Game.GetHowManyHalloweenDrops() / Game.halloweenDrops.length) >= 1,
+						];
+
+						//全シーズン完了していて、完了後シーズンと現在のシーズンが同一だったら何もしない
+						if (!isCompletes.includes(false) && Game.season == CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].season)
+						{
+							return;
+						}
 
 						if (Game.season == "")
 						{
@@ -637,57 +644,60 @@ CookieAssistant.launch = function()
 						}
 						else if (Game.season == "valentines")
 						{
-							if (valentinesRate >= 1)
+							if (isCompletes[0])
 							{
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
 						else if (Game.season == "christmas")
 						{
-							if (winterSantaRate < 1 || Game.santaLevel < 14)
+							if (Game.GetHowManySantaDrops() / Game.santaDrops.length < 1 || Game.santaLevel < 14)
 							{
 								Game.specialTab = "santa";
 								Game.ToggleSpecialMenu(true);
 								Game.UpgradeSanta();
 								Game.ToggleSpecialMenu(false);
 							}
-							if (winterReindeerRate >= 1 && winterSantaRate >= 1 && Game.santaLevel >= 14)
+							if (isCompletes[1])
 							{
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
 						else if (Game.season == "easter")
 						{
-							if (easterRate >= 1 || (Game.GetHowManyEggs() == Game.easterEggs.length - 1 && !Game.Has("Chocolate egg")))
+							if (isCompletes[2])
 							{
 								CookieAssistant.SwitchNextSeason();
 							}
 						}
 						else if (Game.season == "halloween")
 						{
+							let elderCovenant = Game.UpgradesInStore.find(x => x.name == "Elder Covenant");
+							let revokeCovenant = Game.UpgradesInStore.find(x => x.name == "Revoke Elder Covenant");
+
 							//エルダー宣誓の自動購入がONのときは強制OFFにする
 							if (CookieAssistant.config.flags.autoBuyElderPledge == 1)
 							{
 								CookieAssistant.config.flags.autoBuyElderPledge = 0;
 								clearInterval(CookieAssistant.intervalHandles.autoBuyElderPledge);
-								CookieAssistant.intervalHandles.autoBuyElderPledge = null;								
+								CookieAssistant.intervalHandles.autoBuyElderPledge = null;
 							}
 							//エルダー宣誓の時間が残っている場合はエルダー誓約を発動する(エルダー宣誓の時間リセットのため)
-							if (Game.pledgeT >= 1 && Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
+							if (Game.pledgeT >= 1 && elderCovenant != undefined)
 							{
-								Game.Upgrades["Elder Covenant"].buy();
+								elderCovenant.buy();
 							}
 							//エルダー誓約の撤回が出来る場合はする（Wrinklerをスポーンさせる必要があるため）
-							if (Game.UpgradesInStore.indexOf(Game.Upgrades["Revoke Elder Covenant"]) != -1)
+							if (revokeCovenant != undefined)
 							{
-								Game.Upgrades["Revoke Elder Covenant"].buy();
+								revokeCovenant.buy();
 							}
-							if (halloweenRate >= 1)
+							if (isCompletes[3])
 							{
 								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
-								if (Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
+								if (elderCovenant != undefined)
 								{
-									Game.Upgrades["Elder Covenant"].buy(1);
+									elderCovenant.buy(1);
 								}
 								CookieAssistant.SwitchNextSeason();
 							}
