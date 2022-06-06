@@ -119,6 +119,10 @@ CookieAssistant.launch = function()
 				{
 					afterComplete: 0, //シーズン全部終わった後どうするか
 				},
+				system:
+				{
+					lastVersion: '', //リリースノート通知用に前回起動時のバージョンを保持しておく
+				},
 			}
 		};
 
@@ -944,6 +948,7 @@ CookieAssistant.launch = function()
 		}
 		
 		Game.Notify('CookieAssistant loaded!', '', '', 1, 1);
+		CookieAssistant.CheckVersion();
 		CookieAssistant.CheckUpdate();
 	}
 
@@ -1542,7 +1547,24 @@ CookieAssistant.launch = function()
 		CookieAssistant.CheckConfig();
 		CookieAssistant.DoAction();
 	}
-	
+
+	//バージョンアップ直後だったらリリースノートに誘導する
+	CookieAssistant.CheckVersion = function()
+	{
+		let lastVersion = CookieAssistant.config.particular.system.lastVersion;
+		if (lastVersion == '')
+		{
+			CookieAssistant.config.particular.system.lastVersion = CookieAssistant.version;
+			return;
+		}
+		else if (lastVersion != CookieAssistant.version)
+		{
+			Game.Notify(CookieAssistant.name,
+				loc("It's been updated.") + " : " + lastVersion + " => " + CookieAssistant.version + "<br>"
+				+ `<a ${Game.clickStr}="Steam.openLink('https://github.com/hitsub/CookieAssistant/releases/latest')" target="_brank">` + loc("You can check the patch notes from here.") + `</a>`);
+		}
+	}
+
 	CookieAssistant.CheckUpdate = async function()
 	{
 		var res = await fetch("https://api.github.com/repos/hitsub/CookieAssistant/releases/latest")
