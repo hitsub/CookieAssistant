@@ -208,6 +208,11 @@ CookieAssistant.launch = function()
 				{
 					count: 2,
 					desc: "Have two or more buffs / バフが2つ以上",
+				},
+				2:
+				{
+					count: 0,
+					desc: "Always / 常に"
 				}
 			},
 			upgrades:
