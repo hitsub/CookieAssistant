@@ -46,7 +46,7 @@ CookieAssistant.launch = function()
 				autoClickGoldenCookie: 1,
 				autoClickReindeer: 100,
 				autoClickFortuneNews: 100,
-				autoClickWrinklers: 60000,
+				autoClickWrinklers: 1000,
 				autoSpellonBuff: 1000,
 				autoBuyElderPledge: 1000,
 				autoBuyUpgrades: 1000,
@@ -310,6 +310,14 @@ CookieAssistant.launch = function()
 				{
 					desc: "Except Shiny Wrinkler / ピカピカのシワシワ虫を除く"
 				},
+				2:
+				{
+					desc: "Fullest Wrinkler only (All Type) / ..."
+				},
+				3:
+				{
+					desc: "Fullest Wrinkler only (Shiny Wrinkler last) / ..."
+				},
 			},
 			bigCookie:
 			{
@@ -543,17 +551,79 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickWrinklers = setInterval(
 					() =>
 					{
-						Game.wrinklers.forEach(wrinkler =>
+						if (CookieAssistant.config.particular.wrinkler.mode == 0)
 						{
-							if (wrinkler.close == 1)
+							Game.wrinklers.forEach(wrinkler =>
 							{
-								if (CookieAssistant.config.particular.wrinkler.mode == 1 && wrinkler.type == 1)
+								if (wrinkler.sucked)
 								{
-									return;
+									wrinkler.hp = 0;
 								}
-								wrinkler.hp = 0;
+							});
+						}
+						else if (CookieAssistant.config.particular.wrinkler.mode == 1)
+						{
+							Game.wrinklers.forEach(wrinkler =>
+							{
+								if (wrinkler.type == 0 && wrinkler.sucked)
+								{
+									wrinkler.hp = 0;
+								}
+							});
+						}
+						else if (CookieAssistant.config.particular.wrinkler.mode == 2)
+						{
+							let wrinklerCount = 0
+							let fullestWrinkler = [0,0]
+							Game.wrinklers.forEach(wrinkler =>
+							{
+								if (wrinkler.sucked > fullestWrinkler[1]) {
+									fullestWrinkler = [wrinklerCount, wrinkler.sucked];
+									wrinklerCount++;
+								}
+								else if (wrinkler.sucked)
+								{
+									wrinklerCount++;
+								}
+							});
+							if (wrinklerCount >= 12 || (!Game.HasUnlocked("Elder spice") && wrinklerCount >= 10))
+							{
+								Game.wrinklers[fullestWrinkler[0]].hp = 0;
 							}
-						});
+						}
+						else if (CookieAssistant.config.particular.wrinkler.mode == 3)
+						{
+							let wrinklerCount = 0
+							let fullestWrinkler = [0,0]
+							let fullestShinyWrinkler = [0,0]
+							Game.wrinklers.forEach(wrinkler =>
+							{
+								if (wrinkler.type == 0 && wrinkler.sucked > fullestWrinkler[1]) {
+									fullestWrinkler = [wrinklerCount, wrinkler.sucked];
+									wrinklerCount++;
+								}
+								else if (wrinkler.type == 1 && wrinkler.sucked > fullestShinyWrinkler[1]) {
+									fullestShinyWrinkler = [wrinklerCount, wrinkler.sucked];
+									wrinklerCount++;
+								}
+								else if (wrinkler.sucked)
+								{
+									wrinklerCount++;
+								}
+							});
+
+							if (wrinklerCount >= 12 || (!Game.HasUnlocked("Elder spice") && wrinklerCount >= 10))
+							{
+								if (fullestWrinkler[1])
+								{
+									Game.wrinklers[fullestWrinkler[0]].hp = 0;
+								}
+								else if (fullestShinyWrinkler[1])
+								{
+									Game.wrinklers[fullestShinyWrinkler[0]].hp = 0;
+								}
+							}
+						}
 					},
 					CookieAssistant.config.intervals.autoClickWrinklers
 				)
