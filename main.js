@@ -7,9 +7,10 @@ if(typeof CCSE == 'undefined')
 	Game.LoadMod('https://klattmose.github.io/CookieClicker/SteamMods/CCSE/main.js');
 }
 
-CookieAssistant.name = 'Cookie Assistant';
-CookieAssistant.version = '0.7.0';
-CookieAssistant.GameVersion = '2.042';
+CookieAssistant.name = 'Cookie Assistant Remastered';
+CookieAssistant.version = '0.0.1';
+CookieAssistant.GameVersion = '2.052';
+CookieAssistant.EarlyDevelopment = true;
 
 
 CookieAssistant.launch = function()
@@ -1168,7 +1169,18 @@ CookieAssistant.launch = function()
 	CookieAssistant.getMenuString = function()
 	{
 		let m = CCSE.MenuHelper;
-		str = m.Header('Basic Assists');
+		let str = "";
+		//Warn about addon in development
+		if (CookieAssistant.EarlyDevelopment)
+		{
+			str += '<div class="listing" style="text-align: center">'
+					+ `<label style="display: inline-block; padding: 2px 8px; opacity: 0.75; font-size: 12px; vertical-align: middle; pointer-events: none;" class="smallFancyButton">`
+						+ `❗Warning❗ ${CookieAssistant.name} is in very early development. Be sure to report bugs <a style="pointer-events: auto;" href="https://github.com/tempodat/CookieAssistantRemastered/issues">here</a>.`
+					+ '</label>'
+				+ '</div>' 
+		}
+		
+		str += m.Header('Basic Assists');
 		//Large cookie click
 		str +=	'<div class="listing">'
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
@@ -1185,7 +1197,8 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 		//Golden cookie click
-		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
+		str +=	'<div class="listing">'
+				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickGoldenCookie, "CookieAssistant.ChangeInterval('autoClickGoldenCookie', this.value)")
 				+ '<div class="listing">'
@@ -1194,8 +1207,8 @@ CookieAssistant.launch = function()
 							+ CookieAssistant.modes.golden[CookieAssistant.config.particular.golden.mode].desc
 					+ '</a><br />'
 				+ '</div>'
-				+ '</div>';
-		//Destruction of insects
+			+ '</div>';
+		//Popping Wrinklers
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
@@ -1214,7 +1227,7 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals.autoClickReindeer, "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)");
 				}
 		str +=	'</div>';
-		//Fortunenews click
+		//Fortune Cookie click
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1261,7 +1274,7 @@ CookieAssistant.launch = function()
 					+ '</a><br />'
 				+ '</div>'
 				+ '</div>';
-		//Automatic sugar ball harvest
+		//Automatic sugar lump harvest
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHarvestSugarlump', 'CookieAssistant_autoHarvestSugarlump', 'AutoHarvest ' + loc("sugar lump") + ' ON', 'AutoHarvest ' + loc("sugar lump") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1273,7 +1286,7 @@ CookieAssistant.launch = function()
 		str += "<br>"
 		str += m.Header('Advanced Assists');
 
-		//Automatic chanting
+		//Automatic spells
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' ON', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1359,7 +1372,7 @@ CookieAssistant.launch = function()
 				}
 		str +=	'</div></div>'
 		
-		//Automatic building
+		//Auto sell buildings
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSellBuilding', 'CookieAssistant_autoSellBuilding', 'AutoSell Buildings ON', 'AutoSell Buildings OFF', "CookieAssistant.Toggle");
 					str += '<label>Interval(ms) : </label>'
 						+ m.InputBox("CookieAssistant_Interval_autoSellBuilding", 40, CookieAssistant.config.intervals.autoSellBuilding, "CookieAssistant.ChangeInterval('autoSellBuilding', this.value)");
@@ -1398,7 +1411,7 @@ CookieAssistant.launch = function()
 			}
 		}
 
-		//Golden switch automatic switching
+		//Automatic golden switch
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoToggleGoldenSwitch', 'CookieAssistant_autoToggleGoldenSwitch', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' ON', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' OFF', "CookieAssistant.Toggle")
 			+ '<div class="listing">'
 				+ '<label>Enable When : </label>'
@@ -1412,7 +1425,7 @@ CookieAssistant.launch = function()
 			+ '</div>'
 			+ '</div>';
 
-		//Automatic broker employment
+		//Automatic stockbroker employment
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHireBrokers', 'CookieAssistant_autoHireBrokers', 'AutoHire Brokers ON', 'AutoHire Brokers OFF', "CookieAssistant.Toggle");
 		if (CookieAssistant.showAllIntervals)
 		{
@@ -1424,7 +1437,7 @@ CookieAssistant.launch = function()
 		str += "<br />"
 		str += m.Header('Special Assists');
 
-		//ChocolateEgg
+		//Auto toggle chocolate egg
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoChocolateEgg', 'CookieAssistant_autoChocolateEgg', 'Auto Buy ' + loc("[Upgrade name 227]Chocolate egg") + ' ON', 'AutoToggle ' + loc("[Upgrade name 227]Chocolate egg") + ' OFF', "CookieAssistant.Toggle")
 			+ '</div>';
 
@@ -1526,7 +1539,7 @@ CookieAssistant.launch = function()
 	
 	CookieAssistant.CheckUpdate = async function()
 	{
-		var res = await fetch("https://api.github.com/repos/hitsub/CookieAssistant/releases/latest")
+		var res = await fetch("https://api.github.com/repos/tempodat/CookieAssistantRemastered/releases/latest")
 		var json = await res.json()
 
 		if(json.tag_name == CookieAssistant.version)
