@@ -18,7 +18,7 @@ CookieAssistant.launch = function()
 	{
 		var conf = 
 		{
-			//各機能の有効/無効のフラグ
+			//Verable/invalid flags for each function
 			flags:
 			{
 				autoClickBigCookie: 0,
@@ -39,7 +39,7 @@ CookieAssistant.launch = function()
 				autoChocolateEgg : 0,
 				autoHireBrokers : 0,
 			},
-			//各機能の実行間隔
+			//Execution interval of each function
 			intervals:
 			{
 				autoClickBigCookie: 1,
@@ -59,7 +59,7 @@ CookieAssistant.launch = function()
 				autoToggleGoldenSwitch : 500,
 				autoHireBrokers : 1000,
 			},
-			//各機能の特殊設定　CheckConfigでの限界があるのでこれ以上深くしない
+			//Special settings for each function are limited to Checkconfig, so do not deepen anymore
 			particular:
 			{
 				dragon:
@@ -96,7 +96,7 @@ CookieAssistant.launch = function()
 				},
 				sell:
 				{
-					isAfterSell: [], //売却後かどうかのフラグ保持(作動中にゲームを落としても動作するように)
+					isAfterSell: [], //Whether it is after the sale (so that it works even if the game is dropped during the operation)
 					target: [],
 					amount: [],
 					activate_mode: [],
@@ -117,7 +117,7 @@ CookieAssistant.launch = function()
 				},
 				season:
 				{
-					afterComplete: 0, //シーズン全部終わった後どうするか
+					afterComplete: 0, //What to do after the whole season is over
 				},
 			}
 		};
@@ -131,14 +131,14 @@ CookieAssistant.launch = function()
 		CookieAssistant.restoreDefaultConfig(1);
 		CookieAssistant.ReplaceGameMenu();
 
-		//大クッキーのSEミュート
+		//Large cookie SE Mute
         CCSE.SpliceCodeIntoFunction(
 			"Game.playCookieClickSound",
 			2,
 			"if (CookieAssistant.config.particular.bigCookie.isMute) { return; }"
 		);
 
-		//建物売買のSEミュート
+		//SE mute of building buying and selling
 		for (const objectName of Object.keys(Game.Objects)) {
 			CCSE.ReplaceCodeIntoFunction(
 				"Game.Objects['" + objectName + "'].sell",
@@ -154,7 +154,7 @@ CookieAssistant.launch = function()
 			);
 		}
 		
-		//ChocolateEgg自動購入
+		//Chocolategg Automatic purchase
 		CCSE.SpliceCodeIntoFunction(
 			"Game.Ascend",
 			5,
@@ -254,7 +254,7 @@ CookieAssistant.launch = function()
 					desc: "Ignore Wrath Cookie / 怒りのクッキーは無視する"
 				}
 			},
-			sell_buildings: //建物自動売却の発動条件
+			sell_buildings: //Conditions of activation of building automatic sales
 			{
 				0:
 				{
@@ -285,7 +285,7 @@ CookieAssistant.launch = function()
 					desc: "Have three or more buffs / バフが3つ以上",
 				},
 			},
-			sell_buildings_after: //建物自動売却を行った後の動作
+			sell_buildings_after: //Operation after the building automatic
 			{
 				0:
 				{
@@ -397,12 +397,12 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoClickBigCookie = setInterval(
 					() =>
 					{
-						//BGMがおかしくなるので最初の1秒は実行しない
+						//Do not execute the first second because the BGM goes wrong
 						if (Game.T < Game.fps)
 						{
 							return;
 						}
-						//転生中は動作を止める
+						//Stop the operation during reincarnation
 						if (Game.OnAscend)
 						{
 							return;
@@ -503,8 +503,8 @@ CookieAssistant.launch = function()
 								case "building buff":
 									buffCount++;
 									break;
-								case "cursed finger": //ポジティブなバフだが、バフ同士によって相性が悪いため無視する
-								case "devastation": //DevastationはMOD側で起こしたいのでユーザーが自発的に起こしたものについては無視する
+								case "cursed finger": //It is a positive buff, but it is ignored because the buffs are incompatible
+								case "devastation": //Devastation wants to happen on the mod side, so ignore what user voluntarily occurs
 								default:
 									break;
 							}
@@ -514,10 +514,10 @@ CookieAssistant.launch = function()
 						var cost = 0;
 						switch(CookieAssistant.config.particular.spell.mode)
 						{
-							case 0: //必要最低限のMP
+							case 0: //Minimum MP required
 								cost = Math.floor(spell.costMin + grimoire.magicM * spell.costPercent);
 								break;
-							case 1: //MP完全回復
+							case 1: //Mp completely reply
 							default:
 								cost = grimoire.magicM;
 								break;
@@ -567,7 +567,7 @@ CookieAssistant.launch = function()
 						{
 							Game.Upgrades["Elder Pledge"].buy();
 						}
-						//ElderPledgeを自動購入してるんだったら生贄用めん棒も買ってほしいはずなのでこっちでも見る
+						//If you are automatically purchasing ElderPLEDGE, you should buy a sacrifice bun, so I will see it here.
 						if (Game.UpgradesInStore.indexOf(Game.Upgrades["Sacrificial rolling pins"]) != -1)
 						{
 							Game.Upgrades["Sacrificial rolling pins"].buy(1);
@@ -584,26 +584,26 @@ CookieAssistant.launch = function()
 						for (var i in Game.UpgradesInStore)
 						{
 							var upgrade = Game.UpgradesInStore[i];
-							//保管庫に入っているアップグレードは無視する
+							//Ignore the upgrade in the storage
 							if (upgrade.isVaulted())
 							{
 								continue;
 							}
-							//スイッチ類を除いて購入(ElderPledgeもToggle扱いなので考えなくてよい)
-							//生贄用めん棒はこっちでも勝手に買われる
+							//Purchase except for switches (you don't have to think of ElderPledge because it is also treated as TOGGLE)
+							//Sacrificed noodles are bought here without permission
 							if (upgrade.pool != "toggle")
 							{
-								//研究を除くモードの時
+								//At the time of mode excluding research
 								if (CookieAssistant.config.particular.upgrades.mode == 1 && upgrade.pool == "tech")
 								{
 									continue;
 								}
-								//ババアポカリプスに入りたくないモードの時
+								//When you don't want to enter Baba Pocaripus
 								if (CookieAssistant.config.particular.upgrades.mode == 2 && upgrade.name == "One mind")
 								{
 									continue;
 								}
-								//チョコの卵モードがONの時
+								//When the chocolate egg mode is ON
 								if (CookieAssistant.config.flags.autoChocolateEgg && upgrade.name == "Chocolate egg")
 								{
 									continue;
@@ -660,26 +660,26 @@ CookieAssistant.launch = function()
 						}
 						else if (Game.season == "halloween")
 						{
-							//エルダー宣誓の自動購入がONのときは強制OFFにする
+							//Forced to turn off when the automatic purchase of Elder oath is ON
 							if (CookieAssistant.config.flags.autoBuyElderPledge == 1)
 							{
 								CookieAssistant.config.flags.autoBuyElderPledge = 0;
 								clearInterval(CookieAssistant.intervalHandles.autoBuyElderPledge);
 								CookieAssistant.intervalHandles.autoBuyElderPledge = null;								
 							}
-							//エルダー宣誓の時間が残っている場合はエルダー誓約を発動する(エルダー宣誓の時間リセットのため)
+							//If you have time for Elder oath, activate the Elder pledge(For the time reset of Elder Oath)
 							if (Game.pledgeT >= 1 && Game.UpgradesInStore.indexOf(Game.Upgrades["Elder Covenant"]) != -1)
 							{
 								Game.Upgrades["Elder Covenant"].buy();
 							}
-							//エルダー誓約の撤回が出来る場合はする（Wrinklerをスポーンさせる必要があるため）
+							//If you can withdraw the Elder pledge (because it needs to spawn Wrinkler)
 							if (Game.UpgradesInStore.indexOf(Game.Upgrades["Revoke Elder Covenant"]) != -1)
 							{
 								Game.Upgrades["Revoke Elder Covenant"].buy();
 							}
 							if (halloweenRate >= 1)
 							{
-								//エルダー誓約を購入してババアポカリプスを終了させてから次に行く
+								//Purchase Elder pledge and finish Baba Pokalipus and then go to the next
 								Game.Upgrades["Elder Covenant"].buy(1);
 								CookieAssistant.SwitchNextSeason();
 							}
@@ -702,7 +702,7 @@ CookieAssistant.launch = function()
 						{
 							var amount = Game.Objects[objectName].amount % amountPerPurchase == 0 ? amountPerPurchase : amountPerPurchase - Game.Objects[objectName].amount % amountPerPurchase;
 							var isMaxDragon = Game.dragonLevel >= Game.dragonLevels.length - 1;
-							//ドラゴンの自動育成がONの場合は建物の自動購入を制限する
+							//If the dragon automatic development is ON, restrict automatic buying of the building
 							if (!isMaxDragon && CookieAssistant.config.flags.autoTrainDragon && Game.Objects[objectName].amount >= 350 - amountPerPurchase)
 							{
 								amount = 350 - Game.Objects[objectName].amount;
@@ -713,7 +713,7 @@ CookieAssistant.launch = function()
 							}
 							if (Game.cookies >= Game.Objects[objectName].getSumPrice(amount))
 							{
-								//売却モードだったら強制的に購入モードにする
+								//If it is in sale mode, make the purchase mode forcibly
 								if (Game.buyMode < 0)
 								{
 									Game.buyMode = 1;
@@ -743,7 +743,7 @@ CookieAssistant.launch = function()
 						{
 							Game.specialTab = "dragon";
 							Game.ToggleSpecialMenu(true);
-							//育成
+							//Training
 							if (canTrain)
 							{
 								Game.UpgradeDragon();
@@ -755,7 +755,7 @@ CookieAssistant.launch = function()
 									Game.ConfirmPrompt();
 								}
 							}
-							//なでる
+							//Strike
 							if (canPet)
 							{
 								Game.ClickSpecialPic();
@@ -806,7 +806,7 @@ CookieAssistant.launch = function()
 				CookieAssistant.intervalHandles.autoHarvestSugarlump = setInterval(
 					() =>
 					{
-						//砂糖玉がアンロックされているかチェック
+						//Check if the sugar ball is unlocked
 						if (!Game.canLumps())
 						{
 							return;
@@ -870,7 +870,7 @@ CookieAssistant.launch = function()
 									break;
 							}
 						}
-						//スイッチがOFFのとき
+						//When the switch is off
 						if (off != undefined)
 						{
 							let isMode0 = enableMode == 0 && buffCount >= 1;
@@ -883,7 +883,7 @@ CookieAssistant.launch = function()
 								off.buy();
 							}
 						}
-						//スイッチがONのとき
+						//When the switch is ON
 						if (on != undefined)
 						{
 							let isMode0 = disableMode == 0 && buffCount == 0;
@@ -1064,10 +1064,10 @@ CookieAssistant.launch = function()
 		{
 			targetSeason = afterCompleteSeason;
 		}
-		//全シーズンのアップグレードが完了していて現在どこかのシーズンになっている
+		//The upgrade of all seasons is completed and it is now somewhere.
 		if (Game.season != "" && targetSeason == "")
 		{
-			//シーズン終了
+			//Season end
 			Game.seasonT = -1;
 		}
 		if (targetSeason != "" && targetSeason != Game.season)
@@ -1110,8 +1110,8 @@ CookieAssistant.launch = function()
 		egg.buy();
 	}
 
-	//コンフィグのチェック
-	//アプデ時に新規項目がundefinedになって1ms周期の実行になってしまうのを防止
+	//Config
+	//Prevents the new item from becoming undefined at the time of Apde and execution of a 1ms cycle
 	CookieAssistant.CheckConfig = function()
 	{		
 		var defaultConfig = CookieAssistant.defaultConfig();
@@ -1151,7 +1151,7 @@ CookieAssistant.launch = function()
 	}
 
 
-	//オプション&統計の追加
+	//Addition & statistical addition
 	CookieAssistant.ReplaceGameMenu = function()
 	{
 		Game.customOptionsMenu.push(function()
@@ -1169,7 +1169,7 @@ CookieAssistant.launch = function()
 	{
 		let m = CCSE.MenuHelper;
 		str = m.Header('Basic Assists');
-		//大クッキークリック
+		//Large cookie click
 		str +=	'<div class="listing">'
 				+ m.ToggleButton(CookieAssistant.config.flags, 'autoClickBigCookie', 'CookieAssistant_autoClickBigCookieButton', 'AutoClick BigCookie ON', 'AutoClick BigCookie OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
@@ -1184,7 +1184,7 @@ CookieAssistant.launch = function()
 					+ '</a><br />'
 				+ '</div>'
 				+ '</div>';
-		//黄金クッキークリック
+		//Golden cookie click
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickGoldenCookie', 'CookieAssistant_autoClickGoldenCookieButton', 'AutoClick ' + loc("Golden cookie") + ' ON', 'AutoClick ' + loc("Golden cookie") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickBigCookie", 40, CookieAssistant.config.intervals.autoClickGoldenCookie, "CookieAssistant.ChangeInterval('autoClickGoldenCookie', this.value)")
@@ -1195,7 +1195,7 @@ CookieAssistant.launch = function()
 					+ '</a><br />'
 				+ '</div>'
 				+ '</div>';
-		//虫撃破
+		//Destruction of insects
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickWrinklers', 'CookieAssistant_autoClickWrinklers', 'AutoClick ' + loc("wrinkler") + ' ON', 'AutoClick ' + loc("wrinkler") + ' OFF', "CookieAssistant.Toggle")
 				+ '<label>Interval(ms) : </label>'
 				+ m.InputBox("CookieAssistant_Interval_autoClickWrinklers", 40, CookieAssistant.config.intervals.autoClickWrinklers, "CookieAssistant.ChangeInterval('autoClickWrinklers', this.value)")
@@ -1206,7 +1206,7 @@ CookieAssistant.launch = function()
 							+ '</a><br />'
 						+ '</div>'
 				+ '</div>';
-		//トナカイクリック
+		//Reindeer Click
 		str +=  '<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickReindeer', 'CookieAssistant_autoClickReindeerButton', 'AutoClick ' + loc("Reindeer") + ' ON', 'AutoClick ' + loc("Reindeer") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1214,7 +1214,7 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoClickReindeer", 40, CookieAssistant.config.intervals.autoClickReindeer, "CookieAssistant.ChangeInterval('autoClickReindeer', this.value)");
 				}
 		str +=	'</div>';
-		//FortuneNewsクリック
+		//Fortunenews click
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoClickFortuneNews', 'CookieAssistant_autoClickFortuneNewsButton', 'AutoClick FortuneNews ON', 'AutoClick FortuneNews OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1222,7 +1222,7 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoClickFortuneNews", 40, CookieAssistant.config.intervals.autoClickFortuneNews, "CookieAssistant.ChangeInterval('autoClickFortuneNews', this.value)");
 				}
 		str +=	'</div>';
-		//ElderPedge自動購入
+		//ElderPedge Automatic purchase
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyElderPledge', 'CookieAssistant_autoBuyElderPledge', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' ON', 'AutoBuy ' + loc("[Upgrade name 74]Elder Pledge") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1234,7 +1234,7 @@ CookieAssistant.launch = function()
 					+ '<label>This feature will also automatically purchase "Sacrificial rolling pins".</label><br />'
 				+ '</div>'
 				+ '</div>';
-		//アップグレード自動購入
+		//Upgrade automatic purchase
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy ' + loc("upgrade") + ' ON', 'AutoBuy ' + loc("upgrade") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1248,7 +1248,7 @@ CookieAssistant.launch = function()
 					+ '</a><br />'
 				+ '</div>'
 				+ '</div>';
-		//建物自動購入
+		//Building automatic purchase
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyBuildings', 'CookieAssistant_autoBuyBuildings', 'AutoBuy ' + loc("building") + ' ON', 'AutoBuy ' + loc("building") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1262,7 +1262,7 @@ CookieAssistant.launch = function()
 					+ '</a><br />'
 				+ '</div>'
 				+ '</div>';
-		//砂糖玉自動収穫
+		//Automatic sugar ball harvest
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHarvestSugarlump', 'CookieAssistant_autoHarvestSugarlump', 'AutoHarvest ' + loc("sugar lump") + ' ON', 'AutoHarvest ' + loc("sugar lump") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1274,7 +1274,7 @@ CookieAssistant.launch = function()
 		str += "<br>"
 		str += m.Header('Advanced Assists');
 
-		//自動詠唱
+		//Automatic chanting
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSpellonBuff', 'CookieAssistant_autoSpellonBuff', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' ON', 'AutoSpellCast ' + loc("Force the Hand of Fate") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1293,7 +1293,7 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 		
-		//シーズン自動切換え
+		//Season automatic switching
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSwitchSeason', 'CookieAssistant_autoSwitchSeason', 'AutoSwitch Seasons ON', 'AutoSwitch Seasons OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1312,7 +1312,7 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 
-		//ドラゴン自動育成
+		//Dragon automatic development
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoTrainDragon', 'CookieAssistant_autoTrainDragon', 'AutoTrain Dragon ON', 'AutoTrain Dragon OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1331,7 +1331,7 @@ CookieAssistant.launch = function()
 				+ '</div>'
 				+ '</div>';
 
-		//パンテオンのスロット自動セット
+		//Pantheon slot automatic set
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSetSpirits', 'CookieAssistant_autoSetSpirits', 'AutoSet Spirits ON', 'AutoSet Spirits OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
 				{
@@ -1362,7 +1362,7 @@ CookieAssistant.launch = function()
 				}
 		str +=	'</div></div>'
 		
-		//建物自動売却
+		//Automatic building
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoSellBuilding', 'CookieAssistant_autoSellBuilding', 'AutoSell Buildings ON', 'AutoSell Buildings OFF', "CookieAssistant.Toggle");
 					str += '<label>Interval(ms) : </label>'
 						+ m.InputBox("CookieAssistant_Interval_autoSellBuilding", 40, CookieAssistant.config.intervals.autoSellBuilding, "CookieAssistant.ChangeInterval('autoSellBuilding', this.value)");
@@ -1402,7 +1402,7 @@ CookieAssistant.launch = function()
 			}
 		}
 
-		//ゴールデンスイッチ自動切換え
+		//Golden switch automatic switching
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoToggleGoldenSwitch', 'CookieAssistant_autoToggleGoldenSwitch', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' ON', 'AutoToggle ' + loc("[Upgrade name 327]Golden switch") + ' OFF', "CookieAssistant.Toggle")
 			+ '<div class="listing">'
 				+ '<label>Enable When : </label>'
@@ -1416,7 +1416,7 @@ CookieAssistant.launch = function()
 			+ '</div>'
 			+ '</div>';
 
-		//ブローカー自動雇用
+		//Automatic broker employment
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoHireBrokers', 'CookieAssistant_autoHireBrokers', 'AutoHire Brokers ON', 'AutoHire Brokers OFF', "CookieAssistant.Toggle");
 		if (CookieAssistant.showAllIntervals)
 		{
