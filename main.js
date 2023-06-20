@@ -190,11 +190,11 @@ CookieAssistant.launch = function()
 			{
 				0:
 				{
-					desc: "MP is minimum to cast / 最低限のMP",
+					desc: "MP is minimum to cast",
 				},
 				1:
 				{
-					desc: "MP is full / MPがフル",
+					desc: "MP is full",
 				}
 			},
 			spell_buff:
@@ -202,27 +202,27 @@ CookieAssistant.launch = function()
 				0:
 				{
 					count: 1,
-					desc: "Have one buff / バフが1つ",
+					desc: "Have one buff",
 				},
 				1:
 				{
 					count: 2,
-					desc: "Have two or more buffs / バフが2つ以上",
+					desc: "Have two or more buffs",
 				}
 			},
 			upgrades:
 			{
 				0:
 				{
-					desc: "All Upgrades (includes Researches) / 全てのアップグレード(研究を含む)",
+					desc: "All Upgrades (includes Researches)",
 				},
 				1:
 				{
-					desc: "All Upgrades except Researches / 研究を除く全てのアップグレード",
+					desc: "All Upgrades except Researches",
 				},
 				2:
 				{
-					desc: `All Upgrades that don't cause "Grandmapocalypse" / ババアポカリプスが起きない全てのアップグレード`,
+					desc: `All Upgrades that don't cause "Grandmapocalypse"`,
 				},
 			},
 			buildings:
@@ -230,161 +230,161 @@ CookieAssistant.launch = function()
 				0:
 				{
 					amount: 10,
-					desc: "Buy every 10 pieces / 10個単位で購入する",
+					desc: "Buy every 10 pieces",
 				},
 				1:
 				{
 					amount: 50,
-					desc: "Buy every 50 pieces / 50個単位で購入する",
+					desc: "Buy every 50 pieces",
 				},
 				2:
 				{
 					amount: 100,
-					desc: "Buy every 100 pieces / 100個単位で購入する",
+					desc: "Buy every 100 pieces",
 				},
 			},
 			golden:
 			{
 				0:
 				{
-					desc: "Golden Cookie including Wrath Cookie / 怒りのクッキーもクリックする"
+					desc: "Golden Cookie including Wrath Cookie"
 				},
 				1:
 				{
-					desc: "Ignore Wrath Cookie / 怒りのクッキーは無視する"
+					desc: "Ignore Wrath Cookie"
 				}
 			},
 			sell_buildings: //Conditions of activation of building automatic sales
 			{
 				0:
 				{
-					desc: "Have one buff / バフが1つ",
+					desc: "Have one buff",
 				},
 				1:
 				{
-					desc: "Have two or more buffs / バフが2つ以上",
+					desc: "Have two or more buffs",
 				},
 				2:
 				{
-					desc: "Have click buff / クリック系のバフ",
+					desc: "Have click buff",
 				},
 				3:
 				{
-					desc: "Have two or more buffs including click buff / クリック系を含めて2つ以上のバフ",
+					desc: "Have two or more buffs including click buff",
 				},
 				4:
 				{
-					desc: "After auto-spellcast / 自動詠唱の後",
+					desc: "After auto-spellcast",
 				},
 				5:
 				{
-					desc: "Always / 常に"
+					desc: "Always"
 				},
 				6:
 				{
-					desc: "Have three or more buffs / バフが3つ以上",
+					desc: "Have three or more buffs",
 				},
 			},
 			sell_buildings_after: //Operation after the building automatic
 			{
 				0:
 				{
-					desc: "Buy back the amount sold / 売った分だけ買い戻す",
+					desc: "Buy back the amount sold",
 				},
 				1:
 				{
-					desc: "Spellcast if can, and buy back / 詠唱してから買い戻す",
+					desc: "Spellcast if can, and buy back",
 				},
 				2:
 				{
-					desc: "Do nothing / 何もしない",
+					desc: "Do nothing",
 				},
 			},
 			wrinkler:
 			{
 				0:
 				{
-					desc: "All Type / 全てのタイプ",
+					desc: "All Type",
 				},
 				1:
 				{
-					desc: "Except Shiny Wrinkler / ピカピカのシワシワ虫を除く"
+					desc: "Except Shiny Wrinkler"
 				},
 			},
 			bigCookie:
 			{
 				0:
 				{
-					desc: "Always / 常に",
+					desc: "Always",
 				},
 				1:
 				{
-					desc: "Have any click buff / クリック系バフ中" 
+					desc: "Have any click buff" 
 				},
 				2:
 				{
-					desc: "Have one buff / バフが1つ"
+					desc: "Have one buff"
 				},
 				3:
 				{
-					desc: "Have two or more buffs / バフが2つ以上"
+					desc: "Have two or more buffs"
 				}
 			},
 			goldenSwitch_enable:
 			{
 				0:
 				{
-					desc: "Have one buff / バフが1つ"
+					desc: "Have one buff"
 				},
 				1:
 				{
-					desc: "Have two or more buffs / バフが2つ以上"
+					desc: "Have two or more buffs"
 				},
 				2:
 				{
-					desc: "Have click buff / クリック系のバフ",
+					desc: "Have click buff",
 				},
 				3:
 				{
-					desc: "Have two or more buffs including click buff / クリック系を含めて2つ以上のバフ",
+					desc: "Have two or more buffs including click buff",
 				},
 			},
 			goldenSwitch_disable:
 			{
 				0:
 				{
-					desc: "No buffs / バフがない"
+					desc: "No buffs"
 				},
 				1:
 				{
-					desc: "No click buffs / クリックバフが無いとき"
+					desc: "No click buffs"
 				},
 			},
 			season:
 			{
 				0:
 				{
-					desc: "None / なし",
+					desc: "None",
 					season: "",
 				},
 				1:
 				{
-					desc: "Christmas / クリスマス",
+					desc: "Christmas",
 					season: "christmas",
 				},
 				2:
 				{
-					desc: "Easter / イースター",
+					desc: "Easter",
 					season: "easter",
 				},
 				3:
 				{
-					desc: "Halloween / ハロウィン",
+					desc: "Halloween",
 					season: "halloween",
 				},
 				4:
 				{
-					desc: "Valentines / バレンタイン",
+					desc: "Valentines",
 					season: "valentines",
 				},
 			},
@@ -949,7 +949,7 @@ CookieAssistant.launch = function()
 				var grimoire = Game.ObjectsById[7].minigame;
 				if (grimoire == undefined)
 				{
-					Game.Notify(CookieAssistant.name, "You have not unlocked the Grimoire yet, so failed to spellcast.<br />グリモア解放前のため、呪文の発動に失敗しました。", "", 3);
+					Game.Notify(CookieAssistant.name, "You have not unlocked the Grimoire yet, so failed to spellcast.", "", 3);
 					CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
 					return false;
 				}
@@ -970,7 +970,7 @@ CookieAssistant.launch = function()
 			}
 			else
 			{
-				Game.Notify(CookieAssistant.name, "クッキーが足りず建物を買い戻せませんでした。<br />Not have enough cookies to buy back");
+				Game.Notify(CookieAssistant.name, "Not have enough cookies to buy back");
 			}
 			CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
 			return false;
@@ -1013,7 +1013,7 @@ CookieAssistant.launch = function()
 		{
 			if (Game.Objects[objectName].amount < amount)
 			{
-				Game.Notify(CookieAssistant.name, "建物が少ないため売却に失敗しました。<br />Could not sell buildings due to not enough.");
+				Game.Notify(CookieAssistant.name, "Could not sell buildings due to not enough.");
 				return false;
 			}
 			Game.Objects[objectName].sell(amount);
@@ -1092,7 +1092,7 @@ CookieAssistant.launch = function()
 		let egg = Game.UpgradesInStore.find(x => x.name == "Chocolate egg");
 		if (egg == undefined)
 		{
-			Game.Notify(CookieAssistant.name, "チョコの卵の購入に失敗しました。<br />Failed to buy Chocolate Egg.");
+			Game.Notify(CookieAssistant.name, "Failed to buy Chocolate Egg.");
 			return;
 		}
 		if (Game.dragonLevel >= 8 && !Game.hasAura("Earth Shatterer"))
@@ -1230,7 +1230,6 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals.autoBuyElderPledge, "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)");
 				}
 		str +=	'<div class="listing">'
-					+ '<label>※この機能はアップグレードの生贄用めん棒も自動で購入するようになります。</label><br />'
 					+ '<label>This feature will also automatically purchase "Sacrificial rolling pins".</label><br />'
 				+ '</div>'
 				+ '</div>';
@@ -1301,13 +1300,12 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)");
 				}
 		str +=	'<div class="listing">'
-				+ '<label>Switch to after complete / 完了後の切り替え先 : </label>'
+				+ '<label>Switch to after complete : </label>'
 				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.season.afterComplete++; if(CookieAssistant.config.particular.season.afterComplete >= Object.keys(CookieAssistant.modes.season).length){CookieAssistant.config.particular.season.afterComplete = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 						+ CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].desc
 				+ '</a><br />'
 				+ '</div>'
 		str +=	'<div class="listing">'
-					+ '<label>アップグレードが残っているシーズンに自動的に切り替えます。</label><br />'
 					+ '<label>Automatically switch to seasons in which the upgrade is still remained. </label><br />'
 				+ '</div>'
 				+ '</div>';
@@ -1357,7 +1355,6 @@ CookieAssistant.launch = function()
 				}
 				else
 				{
-					str += "<label>⚠️パンテオンがロックされています。アンロックするまでこの機能は使えません。</label><br />";
 					str += "<label>⚠️You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
 				}
 		str +=	'</div></div>'
@@ -1379,7 +1376,7 @@ CookieAssistant.launch = function()
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + '] >= Object.keys(CookieAssistant.modes.sell_buildings).length){CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.sell_buildings[CookieAssistant.config.particular.sell.activate_mode[i_sellconf]].desc
 						+ '</a><br />'
-					+ '<label>Do After Activated / 発動後にやること : </label>'
+					+ '<label>Do After Activated : </label>'
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + '] >= Object.keys(CookieAssistant.modes.sell_buildings_after).length){CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.sell_buildings_after[CookieAssistant.config.particular.sell.after_mode[i_sellconf]].desc
 						+ '</a><br /></li>';
@@ -1397,7 +1394,6 @@ CookieAssistant.launch = function()
 			var temple = Game.Objects['Temple'].minigame;
 			if (temple == undefined || !Game.Objects['Temple'].minigameLoaded || !temple.slot.includes(2))
 			{
-				str += "<label><b style='color: #ff3705'>⚠️ゴジャモックがセットされていないため、有効化しても恩恵が無い可能性があります。</b></label><br />";
 				str += "<label><b style='color: #ff3705'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
 			}
 		}
@@ -1535,11 +1531,11 @@ CookieAssistant.launch = function()
 
 		if(json.tag_name == CookieAssistant.version)
 		{
-			Game.Notify(CookieAssistant.name, '最新版です<br>This is the latest version', "", 3)
+			Game.Notify(CookieAssistant.name, 'This is the latest version', "", 3)
 			return;
 		}
 
-		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">アップデートがあります<br>There will be an update.</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">ここからダウンロードしてください。<br>Download Here</a>`)
+		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">There will be an update.</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">Download Here</a>`)
 		Game.UpdateMenu();
 	}
 
