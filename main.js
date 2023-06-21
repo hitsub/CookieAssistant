@@ -1313,13 +1313,13 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)");
 				}
 		str +=	'<div class="listing">'
-				+ '<label>${loc("Switch to after complete")} : </label>'
+				+ `<label>${loc("Switch to after complete")} : </label>`
 				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.season.afterComplete++; if(CookieAssistant.config.particular.season.afterComplete >= Object.keys(CookieAssistant.modes.season).length){CookieAssistant.config.particular.season.afterComplete = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 						+ CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].desc
 				+ '</a><br />'
 				+ '</div>'
 		str +=	'<div class="listing">'
-					+ '<label>Automatically switch to seasons in which the upgrade is still remained. </label><br />'
+					+ `<label>${loc("Automatically switch to seasons in which the upgrade is still remained.")} </label><br />`
 				+ '</div>'
 				+ '</div>';
 
@@ -1368,7 +1368,7 @@ CookieAssistant.launch = function()
 				}
 				else
 				{
-					str += "<label>⚠️You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.</label><br />";
+					str += `<label>${loc("⚠️You have not unlocked the Pantheon yet. This feature will not be available until it is unlocked.")}</label><br />`;
 				}
 		str +=	'</div></div>'
 		
@@ -1389,7 +1389,7 @@ CookieAssistant.launch = function()
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + '] >= Object.keys(CookieAssistant.modes.sell_buildings).length){CookieAssistant.config.particular.sell.activate_mode[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.sell_buildings[CookieAssistant.config.particular.sell.activate_mode[i_sellconf]].desc
 						+ '</a><br />'
-					+ '<label>Do After Activated : </label>'
+					+ `<label>${loc("Do After Activated")} : </label>`
 						+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + ']++; if(CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + '] >= Object.keys(CookieAssistant.modes.sell_buildings_after).length){CookieAssistant.config.particular.sell.after_mode[' + i_sellconf + '] = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 							+ CookieAssistant.modes.sell_buildings_after[CookieAssistant.config.particular.sell.after_mode[i_sellconf]].desc
 						+ '</a><br /></li>';
@@ -1407,7 +1407,7 @@ CookieAssistant.launch = function()
 			var temple = Game.Objects['Temple'].minigame;
 			if (temple == undefined || !Game.Objects['Temple'].minigameLoaded || !temple.slot.includes(2))
 			{
-				str += "<label><b style='color: #ff3705'>⚠️Godzamok is not set, so there may be no benefit from enabling this.</b></label><br />";
+				str += `<label><b style='color: #ff3705'>${loc("⚠️Godzamok is not set, so there may be no benefit from enabling this.")}</b></label><br />`;
 			}
 		}
 
@@ -1544,11 +1544,11 @@ CookieAssistant.launch = function()
 
 		if(json.tag_name == CookieAssistant.version)
 		{
-			Game.Notify(CookieAssistant.name, 'This is the latest version', "", 3)
+			Game.Notify(CookieAssistant.name, loc('This is the latest version'), "", 3)
 			return;
 		}
 
-		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">There will be an update.</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">Download Here</a>`)
+		Game.Notify(CookieAssistant.name, `<b style="color: #ff8000">${loc("There will be an update.")}</b><br><a ${Game.clickStr}="Steam.openLink('${json.assets[0].browser_download_url}')" target="_brank">${loc("Download Here")}</a>`)
 		Game.UpdateMenu();
 	}
 
