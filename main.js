@@ -191,11 +191,11 @@ CookieAssistant.launch = function()
 			{
 				0:
 				{
-					desc: "MP is minimum to cast",
+					desc: loc("MP is minimum to cast"),
 				},
 				1:
 				{
-					desc: "MP is full",
+					desc: loc("MP is full"),
 				}
 			},
 			spell_buff:
@@ -203,27 +203,27 @@ CookieAssistant.launch = function()
 				0:
 				{
 					count: 1,
-					desc: "Have one buff",
+					desc: loc("Have one buff"),
 				},
 				1:
 				{
 					count: 2,
-					desc: "Have two or more buffs",
+					desc: loc("Have two or more buffs"),
 				}
 			},
 			upgrades:
 			{
 				0:
 				{
-					desc: "All Upgrades (includes Researches)",
+					desc: loc("All Upgrades (includes Researches)"),
 				},
 				1:
 				{
-					desc: "All Upgrades except Researches",
+					desc: loc("All Upgrades except Researches"),
 				},
 				2:
 				{
-					desc: `All Upgrades that don't cause "Grandmapocalypse"`,
+					desc: loc(`All Upgrades that don't cause "Grandmapocalypse"`),
 				},
 			},
 			buildings:
@@ -231,161 +231,161 @@ CookieAssistant.launch = function()
 				0:
 				{
 					amount: 10,
-					desc: "Buy every 10 pieces",
+					desc: loc("Buy every 10 pieces"),
 				},
 				1:
 				{
 					amount: 50,
-					desc: "Buy every 50 pieces",
+					desc: loc("Buy every 50 pieces"),
 				},
 				2:
 				{
 					amount: 100,
-					desc: "Buy every 100 pieces",
+					desc: loc("Buy every 100 pieces"),
 				},
 			},
 			golden:
 			{
 				0:
 				{
-					desc: "Golden Cookie including Wrath Cookie"
+					desc: loc("Golden Cookie including Wrath Cookie")
 				},
 				1:
 				{
-					desc: "Ignore Wrath Cookie"
+					desc: loc("Ignore Wrath Cookie")
 				}
 			},
 			sell_buildings: //Conditions of activation of building automatic sales
 			{
 				0:
 				{
-					desc: "Have one buff",
+					desc: loc("Have one buff"),
 				},
 				1:
 				{
-					desc: "Have two or more buffs",
+					desc: loc("Have two or more buffs"),
 				},
 				2:
 				{
-					desc: "Have click buff",
+					desc: loc("Have click buff"),
 				},
 				3:
 				{
-					desc: "Have two or more buffs including click buff",
+					desc: loc("Have two or more buffs including click buff"),
 				},
 				4:
 				{
-					desc: "After auto-spellcast",
+					desc: loc("After auto-spellcast"),
 				},
 				5:
 				{
-					desc: "Always"
+					desc: loc("Always")
 				},
 				6:
 				{
-					desc: "Have three or more buffs",
+					desc: loc("Have three or more buffs"),
 				},
 			},
 			sell_buildings_after: //Operation after the building automatic
 			{
 				0:
 				{
-					desc: "Buy back the amount sold",
+					desc: loc("Buy back the amount sold"),
 				},
 				1:
 				{
-					desc: "Spellcast if can, and buy back",
+					desc: loc("Spellcast if can, and buy back"),
 				},
 				2:
 				{
-					desc: "Do nothing",
+					desc: loc("Do nothing"),
 				},
 			},
 			wrinkler:
 			{
 				0:
 				{
-					desc: "All Type",
+					desc: loc("All Type"),
 				},
 				1:
 				{
-					desc: "Except Shiny Wrinkler"
+					desc: loc("Except Shiny Wrinkler")
 				},
 			},
 			bigCookie:
 			{
 				0:
 				{
-					desc: "Always",
+					desc: loc("Always"),
 				},
 				1:
 				{
-					desc: "Have any click buff" 
+					desc: loc("Have any click buff") 
 				},
 				2:
 				{
-					desc: "Have one buff"
+					desc: loc("Have one buff")
 				},
 				3:
 				{
-					desc: "Have two or more buffs"
+					desc: loc("Have two or more buffs")
 				}
 			},
 			goldenSwitch_enable:
 			{
 				0:
 				{
-					desc: "Have one buff"
+					desc: loc("Have one buff")
 				},
 				1:
 				{
-					desc: "Have two or more buffs"
+					desc: loc("Have two or more buffs")
 				},
 				2:
 				{
-					desc: "Have click buff",
+					desc: loc("Have click buff"),
 				},
 				3:
 				{
-					desc: "Have two or more buffs including click buff",
+					desc: loc("Have two or more buffs including click buff"),
 				},
 			},
 			goldenSwitch_disable:
 			{
 				0:
 				{
-					desc: "No buffs"
+					desc: loc("No buffs")
 				},
 				1:
 				{
-					desc: "No click buffs"
+					desc: loc("No click buffs")
 				},
 			},
 			season:
 			{
 				0:
 				{
-					desc: "None",
+					desc: loc("None"),
 					season: "",
 				},
 				1:
 				{
-					desc: "Christmas",
+					desc: loc("Christmas"),
 					season: "christmas",
 				},
 				2:
 				{
-					desc: "Easter",
+					desc: loc("Easter"),
 					season: "easter",
 				},
 				3:
 				{
-					desc: "Halloween",
+					desc: loc("Halloween"),
 					season: "halloween",
 				},
 				4:
 				{
-					desc: "Valentines",
+					desc: loc("Valentines"),
 					season: "valentines",
 				},
 			},
@@ -950,7 +950,7 @@ CookieAssistant.launch = function()
 				var grimoire = Game.ObjectsById[7].minigame;
 				if (grimoire == undefined)
 				{
-					Game.Notify(CookieAssistant.name, "You have not unlocked the Grimoire yet, so failed to spellcast.", "", 3);
+					Game.Notify(CookieAssistant.name, loc("You have not unlocked the Grimoire yet, so failed to spellcast."), "", 3);
 					CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
 					return false;
 				}
@@ -971,7 +971,7 @@ CookieAssistant.launch = function()
 			}
 			else
 			{
-				Game.Notify(CookieAssistant.name, "Not have enough cookies to buy back");
+				Game.Notify(CookieAssistant.name, loc("You do not have enough cookies to buy back"));
 			}
 			CookieAssistant.config.particular.sell.isAfterSell[index] = 0;
 			return false;
@@ -1014,7 +1014,7 @@ CookieAssistant.launch = function()
 		{
 			if (Game.Objects[objectName].amount < amount)
 			{
-				Game.Notify(CookieAssistant.name, "Could not sell buildings due to not enough.");
+				Game.Notify(CookieAssistant.name, loc("Could not sell buildings due to not enough."));
 				return false;
 			}
 			Game.Objects[objectName].sell(amount);
@@ -1093,7 +1093,7 @@ CookieAssistant.launch = function()
 		let egg = Game.UpgradesInStore.find(x => x.name == "Chocolate egg");
 		if (egg == undefined)
 		{
-			Game.Notify(CookieAssistant.name, "Failed to buy Chocolate Egg.");
+			Game.Notify(CookieAssistant.name, loc("Failed to buy Chocolate Egg."));
 			return;
 		}
 		if (Game.dragonLevel >= 8 && !Game.hasAura("Earth Shatterer"))
@@ -1243,9 +1243,9 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoBuyElderPledge", 40, CookieAssistant.config.intervals.autoBuyElderPledge, "CookieAssistant.ChangeInterval('autoBuyElderPledge', this.value)");
 				}
 		str +=	'<div class="listing">'
-					+ '<label>This feature will also automatically purchase "Sacrificial rolling pins".</label><br />'
+					+ `<label>${loc("This feature will also automatically purchase \"Sacrificial rolling pins\".")}</label><br />`
 				+ '</div>'
-				+ '</div>';
+			+ '</div>';
 		//Upgrade automatic purchase
 		str +=	'<div class="listing">' + m.ToggleButton(CookieAssistant.config.flags, 'autoBuyUpgrades', 'CookieAssistant_autoBuyUpgrades', 'AutoBuy ' + loc("upgrade") + ' ON', 'AutoBuy ' + loc("upgrade") + ' OFF', "CookieAssistant.Toggle");
 				if (CookieAssistant.showAllIntervals)
@@ -1313,7 +1313,7 @@ CookieAssistant.launch = function()
 						+ m.InputBox("CookieAssistant_Interval_autoSwitchSeason", 40, CookieAssistant.config.intervals.autoSwitchSeason, "CookieAssistant.ChangeInterval('autoSwitchSeason', this.value)");
 				}
 		str +=	'<div class="listing">'
-				+ '<label>Switch to after complete : </label>'
+				+ '<label>${loc("Switch to after complete")} : </label>'
 				+ '<a class="option" ' + Game.clickStr + '=" CookieAssistant.config.particular.season.afterComplete++; if(CookieAssistant.config.particular.season.afterComplete >= Object.keys(CookieAssistant.modes.season).length){CookieAssistant.config.particular.season.afterComplete = 0;} Game.UpdateMenu(); PlaySound(\'snd/tick.mp3\');">'
 						+ CookieAssistant.modes.season[CookieAssistant.config.particular.season.afterComplete].desc
 				+ '</a><br />'
